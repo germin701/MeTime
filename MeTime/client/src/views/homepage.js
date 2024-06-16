@@ -265,6 +265,7 @@ function HomePage() {
                   display: 'flex',
                 }}
               >
+                <Link to="/gamespage">
                 <img
                   className="WinnerGamerSittingGamingChairDeskPlayingSpaceShooterVideoGamesWithRgbKeyboardMouse1"
                   style={{
@@ -273,7 +274,7 @@ function HomePage() {
                   }}
                   src="https://via.placeholder.com/473x340"
                   alt="Gaming"
-                />
+                /></Link>
                 <div
                   className="Frame18"
                   style={{
