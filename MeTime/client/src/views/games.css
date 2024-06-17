@@ -3,6 +3,7 @@ input, select {
     margin: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
+
   }
 
 .games-list {
@@ -76,4 +77,58 @@ input, select {
   .bold-title {
     font-weight: bold;
   }
-  
+
+  button.search {
+    width: 100px;
+    height: 30px;
+    padding-left: 32px; 
+    padding-right: 32px; 
+    padding-top: 8px; 
+    padding-bottom: 8px; 
+    background: #D0AA8D; 
+    border-radius: 32px; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 8px; 
+    display: inline-flex;
+    color: white;
+    font-size: 16px; 
+    font-family: 'Montserrat';
+    font-weight: 600; 
+    cursor: pointer;
+  }
+
+  button.search:hover{
+    background-color: #543d11;
+  }
+
+  button.clear {
+    width: 100px;
+    height: 30px;
+    padding-left: 32px; 
+    padding-right: 32px; 
+    padding-top: 8px; 
+    padding-bottom: 8px; 
+    background: #662e4c; 
+    border-radius: 32px; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 8px; 
+    display: inline-flex;
+    color: white;
+    font-size: 16px; 
+    font-family: 'Montserrat';
+    font-weight: 600; 
+    cursor: pointer;
+    margin-left: 15px;
+  }
+
+  button.clear:hover{
+    background-color: #2f0722;
+  }
+
+  .mainTitle {
+    font-weight: bold;
+    font-size: 34px;
+    align-items: center;
+  }
