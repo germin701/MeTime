@@ -74,13 +74,8 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).send('Invalid email or password');
         }
 
-        // Generate a token (optional)
+        // Generate a token
         const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '24h' });
-
-       // setTimeout(() => {
-       //   res.status(401).send('Session expired. Please log in again.');
-    //  }, 86400000); 
-
 
         res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
@@ -104,6 +99,7 @@ app.get('/api/getUsername', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

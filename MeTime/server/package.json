@@ -19,5 +19,6 @@
   },
   "devDependencies": {
     "concurrently": "^7.0.0"
-  }
+  },
+   "proxy": "https://www.freetogame.com"
 }

@@ -6,6 +6,8 @@ import RadioPage from './views/radiopage';
 import GamesPage from './views/games';
 import SignUpPage from './views/signup';
 import LoginPage from './views/login';
+import ProfilePage from './views/profile';
+import LatestPage from './views/latest';
 import { AuthProvider } from './AuthContext';
 import './App.css';
 
@@ -20,6 +22,8 @@ function App() {
             <Route path="/homepage" element={<HomePage />} />
             <Route path="/radiopage" element={<RadioPage />} />
             <Route path="/gamespage" element={<GamesPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/latest" element={<LatestPage />} />
           </Routes>
         </div>
       </Router>

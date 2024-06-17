@@ -158,7 +158,7 @@ function SignUpPage() {
                                     gap: '8px',
                                     display: 'inline-flex'
                                 }}>
-                                    <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+                                    <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" style={{ width: '100%', border: 'none', outline: 'none' }} />
                                 </div>
                             </div>
                             <div style={{
@@ -197,7 +197,7 @@ function SignUpPage() {
                                     gap: '8px',
                                     display: 'inline-flex'
                                 }}>
-                                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
+                                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" style={{ width: '100%', border: 'none', outline: 'none' }} />
                                 </div>
                             </div>
                             <div style={{
@@ -236,7 +236,7 @@ function SignUpPage() {
                                     gap: '8px',
                                     display: 'inline-flex'
                                 }}>
-                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" style={{ width: '100%', border: 'none', outline: 'none' }} />
                                 </div>
                             </div>
                             <div style={{
@@ -275,7 +275,7 @@ function SignUpPage() {
                                     gap: '8px',
                                     display: 'inline-flex'
                                 }}>
-                                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" />
+                                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" style={{ width: '100%', border: 'none', outline: 'none' }} />
                                 </div>
                             </div>
                             <div style={{

@@ -16,25 +16,28 @@ function LoginPage() {
                 email,
                 password
             });
-    
-            const { token, expiresIn } = response.data;
+
+            const { token } = response.data;
             localStorage.setItem('token', token); // Store token in localStorage
-    
+
             console.log('Login successful:', response.data);
-            const response2 = await axios.get('http://localhost:5000/api/getUsername', { params: { email } });
+            const response2 = await axios.get('http://localhost:5000/api/getUsername', {
+                headers: { Authorization: `Bearer ${token}` },
+                params: { email }
+            });
             const fetchedUsername = response2.data.username;
             setAuthState({ isAuthenticated: true, email, username: fetchedUsername });
             navigate('/homepage');
-    
+
             alert('Login successful');
-    
+
             // Redirect to login page after token expiration time
             setTimeout(() => {
                 alert('Your session has expired. Please log in again.');
                 setAuthState({ isAuthenticated: false, email: '', username: '' });
                 localStorage.removeItem('token'); // Remove token from localStorage
                 navigate('/login'); // Redirect to login page using react-router-dom
-            }, 86400000); 
+            }, 864000000); // Token expires in 24 hours
         } catch (error) {
             if (error.response && error.response.status === 400 && error.response.data === 'Invalid email or password') {
                 alert('Invalid email or password');
@@ -44,7 +47,7 @@ function LoginPage() {
             }
         }
     };
-    
+
     return (
         <div style={{
             width: '100%',
@@ -163,7 +166,18 @@ function LoginPage() {
                                     gap: '8px',
                                     display: 'inline-flex'
                                 }}>
-                                    <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+                                    <input 
+                                        type="text" 
+                                        value={email} 
+                                        onChange={(e) => setEmail(e.target.value)} 
+                                        placeholder="Email"
+                                        style={{
+                                            width: '100%',
+                                            border: 'none',
+                                            outline: 'none',
+                                            fontSize: '16px'
+                                        }}
+                                    />
                                 </div>
                             </div>
                             <div style={{
@@ -202,8 +216,31 @@ function LoginPage() {
                                     gap: '8px',
                                     display: 'inline-flex'
                                 }}>
-                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+                                    <input 
+                                        type="password" 
+                                        value={password} 
+                                        onChange={(e) => setPassword(e.target.value)} 
+                                        placeholder="Password"
+                                        style={{
+                                            width: '100%',
+                                            border: 'none',
+                                            outline: 'none',
+                                            fontSize: '16px'
+                                        }}
+                                    />
                                 </div>
+                            </div>
+                            <div onClick={() => navigate('/forgot-password')} style={{
+                                color: '#4A3F39',
+                                fontSize: '14px',
+                                fontFamily: 'Montserrat',
+                                fontWeight: '500',
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                                marginTop: '10px',
+                                marginLeft: '5px'
+                            }}>
+                                Forgot Password?
                             </div>
                         </div>
                         <div style={{
