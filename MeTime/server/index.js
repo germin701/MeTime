@@ -199,6 +199,40 @@ app.delete('/api/saveGame', async (req, res) => {
   }
 });
 
+// route to handle updating user details
+app.put('/api/updateUser/:username', async (req, res) => {
+  try {
+      const { username } = req.params;
+      const { email, password } = req.body;
+      
+      // Find the user by their username
+      const user = await User.findOne({ username });
+
+      if (!user) {
+          return res.status(404).send('User not found');
+      }
+
+      // Update email if it is provided
+      if (email) {
+          user.email = email;
+      }
+
+      // Update password if it is provided
+      if (password) {
+          user.password = await bcrypt.hash(password, 10);
+      }
+
+      // Save the updated user details
+      await user.save();
+
+      res.status(200).json({ email: user.email });
+  } catch (error) {
+      console.error('Failed to update user:', error);
+      res.status(500).send('Failed to update user');
+  }
+});
+
+
 // current port
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
