@@ -11,13 +11,19 @@ function SignUpPage() {
     const navigate = useNavigate();
 
     const handleSignUp = async () => {
-        // Check if password and confirm password match
+        // check empty input fields
+        if (email == "" || username == "" || password == "" || confirmPassword == ""){
+            alert('Please enter all fields');
+            return;
+        }
+        // check if password and confirm password match
         if (password !== confirmPassword) {
             alert('Passwords do not match');
             return;
         }
 
         try {
+            // insert data to server
             const response = await axios.post('http://localhost:5000/api/signup', {
                 email,
                 username,
@@ -28,7 +34,7 @@ function SignUpPage() {
             alert('User registered successfully');
             console.log('User registered successfully:', response.data);
             navigate('/login');
-            // Redirect or handle success as needed
+            
         } catch (error) {
             if (error.response && error.response.status === 400 && error.response.data === 'Email already exists') {
                 alert('User already exists!');

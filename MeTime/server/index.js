@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const User = require('./schema/user.js');
+const SavedGame = require('./schema/game.js');
 const connectDB = require("./dbconn.js");
 const cors = require('cors');
 const crypto = require('crypto');
@@ -11,43 +12,43 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// middleware
 app.use(bodyParser.json());
 app.use(cors());  // Enable CORS
 
-// Connect to MongoDB
+// connect to MongoDB
 connectDB().then(() => {
     console.log('Connected to MongoDB');
 }).catch((err) => {
     console.error('Failed to connect to MongoDB', err);
 });
 
-// Route to handle user registration
+// route to handle user registration
 app.post('/api/signup', async (req, res) => {
     try {
         const { email, username, password, confirmPassword } = req.body;
 
-        // Check if password and confirmPassword match
+        // check if password and confirmPassword match
         if (password !== confirmPassword) {
             return res.status(400).send('Passwords do not match');
         }
 
-        // Check if email already exists
+        // check if email already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).send('Email already exists');
         }
 
-        // Hash the password
+        // hash the password while storing in database
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Generate a new UUID for each user
+        // generate a new UUID ( user ID) for each user using crypto 
         const id = crypto.randomBytes(16).toString('hex');
 
-        // Create a new user
+        // create a new user
         const newUser = new User({ _id: id, email, username, password: hashedPassword });
 
-        // Save the user to the database
+        // save the user to the database
         await newUser.save();
 
         res.status(201).send('User registered successfully');
@@ -57,24 +58,24 @@ app.post('/api/signup', async (req, res) => {
     }
 });
 
-// Route to handle user login
+// route to handle user login
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check if the user exists
+        // check if the user exists
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).send('Invalid email or password');
         }
 
-        // Check if the password is correct
+        // check if the password is correct
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).send('Invalid email or password');
         }
 
-        // Generate a token
+        // generate a token once logged in successfully
         const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '24h' });
 
         res.status(200).json({ message: 'Login successful', token });
@@ -84,7 +85,7 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Endpoint to get the username by email
+// endpoint to get the username by email
 app.get('/api/getUsername', async (req, res) => {
   const email = req.query.email;
 
@@ -100,7 +101,105 @@ app.get('/api/getUsername', async (req, res) => {
   }
 });
 
+// endpoint to get the user ID by email
+app.get('/api/getUserId', async (req, res) => {
+    const email = req.query.email;
+  
+    try {
+      const user = await User.findOne({ email });
+      if (user) {
+        res.json({ userId: user._id });
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
 
+// route to handle saving of a game to the user's favorites
+app.post('/api/saveGame', async (req, res) => {
+    try {
+      const { username, game } = req.body; // extract game from req.body
+  
+      if (!username || !game) {
+        return res.status(400).send('Invalid request body');
+      }
+  
+      // check if the game is already saved by the user
+      const existingSavedGame = await SavedGame.findOne({ username, id: game.id });
+      if (existingSavedGame) {
+        return res.status(400).send('Game already saved to favorites');
+      }
+  
+      // create a new saved game
+      const newSavedGame = new SavedGame({
+        username,
+        id: game.id,
+        title: game.title,
+        genre: game.genre,
+        platform: game.platform,
+        publisher: game.publisher,
+        developer: game.developer,
+        release_date: game.release_date,
+        thumbnail: game.thumbnail,
+        short_description: game.short_description,
+        game_url: game.game_url,
+      });
+  
+      // save the game to the database
+      await newSavedGame.save();
+  
+      res.status(201).send('Game saved to favorites successfully');
+    } catch (error) {
+      console.error('Failed to save game:', error.message); // Log the error message
+      res.status(500).send('Failed to save game');
+    }
+  });
+  
+// route to get saved games for a user
+app.get('/api/saveGame', async (req, res) => {
+  try {
+    const { username } = req.query;
+
+    if (!username) {
+      return res.status(400).send('Username is required');
+    }
+
+    const savedGames = await SavedGame.find({ username });
+
+    res.status(200).json(savedGames);
+  } catch (error) {
+    console.error('Failed to fetch saved games:', error.message); 
+    res.status(500).send('Failed to fetch saved games');
+  }
+});
+
+// route to handle deleting a saved game from the user's favorites
+app.delete('/api/saveGame', async (req, res) => {
+  try {
+    const { username, gameId } = req.query;
+
+    if (!username || !gameId) {
+      return res.status(400).send('Username and gameId are required');
+    }
+
+    // find the game using username followed by game ID
+    const result = await SavedGame.findOneAndDelete({ username, id: parseInt(gameId) });
+
+    if (!result) {
+      return res.status(404).send('Game not found');
+    }
+
+    res.status(200).send('Game deleted successfully');
+  } catch (error) {
+    console.error('Failed to delete game:', error.message); 
+    res.status(500).send('Failed to delete game');
+  }
+});
+
+// current port
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

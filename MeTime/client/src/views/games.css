@@ -105,22 +105,17 @@ input, select {
   button.clear {
     width: 100px;
     height: 30px;
-    padding-left: 32px; 
-    padding-right: 32px; 
-    padding-top: 8px; 
-    padding-bottom: 8px; 
-    background: #662e4c; 
-    border-radius: 32px; 
-    justify-content: center; 
-    align-items: center; 
-    gap: 8px; 
+    padding: 8px 32px;
+    border-radius: 32px;
+    justify-content: center;
+    align-items: center;
     display: inline-flex;
     color: white;
-    font-size: 16px; 
+    font-size: 14px;
     font-family: 'Montserrat';
-    font-weight: 600; 
+    font-weight: 600;
     cursor: pointer;
-    margin-left: 15px;
+    background: #662e4c; 
   }
 
   button.clear:hover{

@@ -8,6 +8,7 @@ import SignUpPage from './views/signup';
 import LoginPage from './views/login';
 import ProfilePage from './views/profile';
 import LatestPage from './views/latest';
+import FavoritesPage from './views/favourite';
 import { AuthProvider } from './AuthContext';
 import './App.css';
 
@@ -17,13 +18,15 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-            <Route path="/" element={<SignUpPage />} />
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/homepage" element={<HomePage />} />
             <Route path="/radiopage" element={<RadioPage />} />
             <Route path="/gamespage" element={<GamesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/latest" element={<LatestPage />} />
+            <Route path="/favourites" element={<FavoritesPage/>} />
           </Routes>
         </div>
       </Router>

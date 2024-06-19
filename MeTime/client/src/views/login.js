@@ -17,8 +17,8 @@ function LoginPage() {
                 password
             });
 
-            const { token } = response.data;
-            localStorage.setItem('token', token); // Store token in localStorage
+            const { token } = response.data; 
+            localStorage.setItem('token', token); // store token in localStorage
 
             console.log('Login successful:', response.data);
             const response2 = await axios.get('http://localhost:5000/api/getUsername', {
@@ -31,13 +31,13 @@ function LoginPage() {
 
             alert('Login successful');
 
-            // Redirect to login page after token expiration time
+            // redirect to login page after token expiration time
             setTimeout(() => {
                 alert('Your session has expired. Please log in again.');
                 setAuthState({ isAuthenticated: false, email: '', username: '' });
-                localStorage.removeItem('token'); // Remove token from localStorage
-                navigate('/login'); // Redirect to login page using react-router-dom
-            }, 864000000); // Token expires in 24 hours
+                localStorage.removeItem('token'); // remove token from localStorage
+                navigate('/login'); // redirect to login page 
+            }, 864000000); // token expires in 24 hours
         } catch (error) {
             if (error.response && error.response.status === 400 && error.response.data === 'Invalid email or password') {
                 alert('Invalid email or password');
@@ -149,7 +149,8 @@ function LoginPage() {
                                         fontSize: '18px',
                                         fontFamily: 'Montserrat',
                                         fontWeight: '600',
-                                        wordWrap: 'break-word'
+                                        wordWrap: 'break-word',
+                                        paddingTop: '10px'
                                     }}>
                                         Email
                                     </div>
@@ -230,17 +231,32 @@ function LoginPage() {
                                     />
                                 </div>
                             </div>
-                            <div onClick={() => navigate('/forgot-password')} style={{
-                                color: '#4A3F39',
-                                fontSize: '14px',
-                                fontFamily: 'Montserrat',
-                                fontWeight: '500',
-                                textDecoration: 'underline',
-                                cursor: 'pointer',
-                                marginTop: '10px',
-                                marginLeft: '5px'
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                marginTop: '10px'
                             }}>
-                                Forgot Password?
+                                <div onClick={() => navigate('/forgot-password')} style={{
+                                    color: '#4A3F39',
+                                    fontSize: '14px',
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: '500',
+                                    textDecoration: 'underline',
+                                    cursor: 'pointer'
+                                }}>
+                                    Forgot Password?
+                                </div>
+                                <div onClick={() => navigate('/signup')} style={{
+                                    color: '#4A3F39',
+                                    fontSize: '14px',
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: '500',
+                                    textDecoration: 'underline',
+                                    cursor: 'pointer'
+                                }}>
+                                    Does not have an account? SIGN UP
+                                </div>
                             </div>
                         </div>
                         <div style={{
@@ -276,5 +292,6 @@ function LoginPage() {
         </div>
     );
 }
-
-export default LoginPage;
+    
+    export default LoginPage;
+    
