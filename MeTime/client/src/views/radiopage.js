@@ -154,7 +154,7 @@ function RadioPage() {
       <div>
         <h1 className='mainTitle'>Radio</h1>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '15px', marginTop: '10px', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginTop: '10px', justifyContent: 'center' }}>
             <input
               type="text"
               name="name"
@@ -181,8 +181,8 @@ function RadioPage() {
                 <option key={language.name} value={language.name}>{language.name}</option>
               ))}
             </select>
-            <button className='search' onClick={handleSearch}>Search</button>
-            <button className='clear' onClick={clearFilters}>Clear Filters</button>
+            <button className='search' onClick={handleSearch} style={{ 'margin-right': '6px' }}>Search</button>
+            <button className='clear' onClick={clearFilters}>Clear</button>
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>

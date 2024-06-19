@@ -102,13 +102,10 @@ button.clear {
     font-family: 'Montserrat';
     font-weight: 600;
     cursor: pointer;
-    background: #FFF4F1;
-    border: 2px solid #D0AA8D;
-    color: #D0AA8D;
+    background: #D0AA8D;
 }
 
 button.clear:hover {
     background-color: #543d11;
-    border: 2px solid #543d11;
     color: white;
 }
