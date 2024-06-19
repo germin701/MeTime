@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import news from '../assets/news.jpg';
 import book from '../assets/book.jpg';
 import game from '../assets/game.jpg';
@@ -10,8 +10,18 @@ import profileIcon from '../assets/profilepic.png';
 import { AuthContext } from '../AuthContext';
 
 function HomePage() {
-  const { authState } = useContext(AuthContext);
+  const { authState, setAuthState } = useContext(AuthContext);
   const { username } = authState;
+  const navigate = useNavigate();
+
+  // log out
+  const logout = () => {
+    // clear token, session ended
+    localStorage.removeItem('authToken');
+    setAuthState({ isAuthenticated: false, email: '', username: '', password: '' });
+    console.log("Log Out");
+    navigate('/login');
+  };
 
   return (
     <div className="WrapContainer" style={{ width: '100%', backgroundColor: '#FFF4F1', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -44,9 +54,12 @@ function HomePage() {
             </div>
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'flex-start', paddingRight: '20px', gap: '12px', display: 'flex' }}>
-            <div style={{ width: '115px', height: '40px', paddingLeft: '16px', paddingRight: '16px', background: '#EA6767', borderRadius: '8px', justifyContent: 'center', alignItems: 'center', gap: '8px', display: 'flex' }}>
-              <div style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', lineHeight: '30px', wordWrap: 'break-word' }}>Log Out</div>
-            </div>
+          <div style={{ padding: '0 20px' }}>
+            <button onClick={logout} style={{ width: '120px', height: '40px', background: '#EA6767', borderRadius: '8px', color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', border: 'none', cursor: 'pointer' }}>
+              Log Out
+            </button>
+
+          </div>
           </div>
         </div>
       </div>

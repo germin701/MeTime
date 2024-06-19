@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 import saveIcon from '../assets/favourite.png';
 import profileIcon from '../assets/profilepic.png';
@@ -9,14 +9,14 @@ import { faBookOpen, faMusic, faGamepad, faNewspaper } from '@fortawesome/free-s
 
 // Page to display latest/ highly recommended information for games, books, news and radios (4 APIs)
 function LatestPage() {
-  const { authState } = useContext(AuthContext);
+  const { authState, setAuthState } = useContext(AuthContext);
   const { email, username } = authState;
   const [games, setGames] = useState([]);
   const [news, setNews] = useState([]);
   const [books, setBooks] = useState([]);
   const [radios, setRadios] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
 
   // fetch all data
@@ -102,6 +102,15 @@ function LatestPage() {
     }
   };
 
+  // log out
+  const logout = () => {
+    // clear token, session ended
+    localStorage.removeItem('authToken');
+    setAuthState({ isAuthenticated: false, email: '', username: '', password: '' });
+    console.log("Log Out");
+    navigate('/login');
+  };
+
   return (
     // navigation bar
     <div className="WrapContainer" style={{ width: '100%', backgroundColor: '#FFF4F1', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -125,7 +134,10 @@ function LatestPage() {
             <Link to="/profile" style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', textDecoration: 'none' }}>My Profile</Link>
           </div>
           <div style={{ padding: '0 20px' }}>
-            <button style={{ width: '115px', height: '40px', background: '#EA6767', borderRadius: '8px', color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', border: 'none', cursor: 'pointer' }}>Log Out</button>
+            <button onClick={logout} style={{ width: '120px', height: '40px', background: '#EA6767', borderRadius: '8px', color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', border: 'none', cursor: 'pointer' }}>
+              Log Out
+            </button>
+
           </div>
         </div>
       </div>

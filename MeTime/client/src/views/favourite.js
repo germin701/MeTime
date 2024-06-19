@@ -3,11 +3,11 @@ import axios from 'axios';
 import { AuthContext } from '../AuthContext';
 import saveIcon from '../assets/favourite.png';
 import profileIcon from '../assets/profilepic.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // User's Favourite Collection Page
 function FavoritesPage() {
-  const { authState } = useContext(AuthContext);
+  const { authState, setAuthState } = useContext(AuthContext);
   const [savedGames, setSavedGames] = useState([]);
   const [savedBooks, setSavedBooks] = useState([]);
   const [savedRadios, setSavedRadios] = useState([]);
@@ -16,10 +16,11 @@ function FavoritesPage() {
   const [error, setError] = useState(null);
   const { username } = authState;
   const [selectedCategory, setSelectedCategory] = useState('games');
+  const navigate = useNavigate();
 
   const fetchItems = async (category) => {
     setLoading(true); // start loading
-    setError(null); 
+    setError(null);
 
     try {
       switch (category) {
@@ -127,6 +128,15 @@ function FavoritesPage() {
     // books, news, radios here
   };
 
+  // log out
+  const logout = () => {
+    // clear token, session ended
+    localStorage.removeItem('authToken');
+    setAuthState({ isAuthenticated: false, email: '', username: '', password: '' });
+    console.log("Log Out");
+    navigate('/login');
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -167,7 +177,7 @@ function FavoritesPage() {
         ) : (
           // if there's no saved games
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p>No saved games found.</p>  
+            <p>No saved games found.</p>
           </div>
         );
       case 'books':
@@ -216,11 +226,14 @@ function FavoritesPage() {
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'center', gap: '8px', display: 'flex' }}>
             <img src={profileIcon} alt="Profile" style={{ width: '25px', height: '25px' }} />
-            <Link to="/profile" style={{ color: 'white',  fontSize: '20px', textDecoration: 'none' }}>My Profile</Link>
+            <Link to="/profile" style={{ color: 'white', fontSize: '20px', textDecoration: 'none' }}>My Profile</Link>
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'flex-start', paddingRight: '20px', gap: '12px', display: 'flex' }}>
-            <div style={{ width: '115px', height: '40px', paddingLeft: '16px', paddingRight: '16px', background: '#EA6767', borderRadius: '8px', justifyContent: 'center', alignItems: 'center', gap: '8px', display: 'flex', cursor: 'pointer' }}>
-              <div style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', lineHeight: '30px', wordWrap: 'break-word' }}>Log Out</div>
+            <div style={{ padding: '0 20px' }}>
+              <button onClick={logout} style={{ width: '120px', height: '40px', background: '#EA6767', borderRadius: '8px', color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', border: 'none', cursor: 'pointer' }}>
+                Log Out
+              </button>
+
             </div>
           </div>
         </div>

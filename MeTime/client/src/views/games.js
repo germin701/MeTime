@@ -4,7 +4,7 @@ import './games.css';
 import saveIcon from '../assets/favourite.png';
 import profileIcon from '../assets/profilepic.png';
 import { AuthContext } from '../AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 //Games Page
 function GamesPage() {
@@ -16,6 +16,7 @@ function GamesPage() {
   const [noResults, setNoResults] = useState(false);
   const [savedGames, setSavedGames] = useState([]);
   const { username } = authState;
+  const navigate = useNavigate();
 
   // get logged-in username
   useEffect(() => {
@@ -127,8 +128,10 @@ function GamesPage() {
   // log out
   const logout = () => {
     // clear token, session ended
-    localStorage.removeItem('authToken'); 
+    localStorage.removeItem('authToken');
     setAuthState({ isAuthenticated: false, email: '', username: '', password: '' });
+    console.log("Log Out");
+    navigate('/login');
   };
 
   return (
@@ -151,13 +154,14 @@ function GamesPage() {
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'center', gap: '8px', display: 'flex' }}>
             <img src={profileIcon} alt="Profile" style={{ width: '25px', height: '25px' }} />
-            <Link to="/profile" style={{ color: 'inherit', textDecoration: 'none' }}>My Profile</Link>
+            <Link to="/profile" style={{ color: 'white', fontSize: '20px', textDecoration: 'none' }}>My Profile</Link>
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'flex-start', paddingRight: '20px', gap: '12px', display: 'flex' }}>
-            <div
-              style={{ width: '115px', height: '40px', paddingLeft: '16px', paddingRight: '16px', background: '#EA6767', borderRadius: '8px', justifyContent: 'center', alignItems: 'center', gap: '8px', display: 'flex' }}
-              onClick={logout}>
-              <div style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', lineHeight: '30px', wordWrap: 'break-word' }}>Log Out</div>
+            <div style={{ padding: '0 20px' }}>
+              <button onClick={logout} style={{ width: '120px', height: '40px', background: '#EA6767', borderRadius: '8px', color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', border: 'none', cursor: 'pointer' }}>
+                Log Out
+              </button>
+
             </div>
           </div>
 
