@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './views/homepage';
 import RadioPage from './views/radiopage';
+import BookPage from './views/bookspage';
 import GamesPage from './views/games';
 import SignUpPage from './views/signup';
 import LoginPage from './views/login';
@@ -23,6 +24,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/homepage" element={<HomePage />} />
             <Route path="/radiopage" element={<RadioPage />} />
+            <Route path="/bookspage" element={<BookPage />} />
             <Route path="/gamespage" element={<GamesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/latest" element={<LatestPage />} />

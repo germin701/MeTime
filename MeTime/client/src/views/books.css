@@ -1,0 +1,129 @@
+input, select {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+.books-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .book-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .book-thumbnail {
+    width: 400px; 
+    height: 500px;
+    border-radius: 20px;
+    margin-left: 10px;
+  }
+  
+  .book-details {
+    flex: 1;
+    text-align: left;
+    height: 310px;
+  }
+  
+  .book-title {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .book-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  button.save {
+    padding: 10px 15px;
+    border: none;
+    background-color: #46360a;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button.save:hover {
+    background-color: #5f4f13;
+  }
+
+  button.view {
+    padding: 10px 15px;
+    border: none;
+    background-color: #14325f;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button.view:hover {
+    background-color: #496987;
+  }
+  
+  button.search {
+    width: 100px;
+    height: 30px;
+    padding-left: 32px; 
+    padding-right: 32px; 
+    padding-top: 8px; 
+    padding-bottom: 8px; 
+    background: #D0AA8D; 
+    border-radius: 32px; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 8px; 
+    display: inline-flex;
+    color: white;
+    font-size: 16px; 
+    font-family: 'Montserrat';
+    font-weight: 600; 
+    cursor: pointer;
+  }
+
+  button.search:hover{
+    background-color: #543d11;
+  }
+
+  button.clear {
+    width: 100px;
+    height: 30px;
+    padding-left: 32px; 
+    padding-right: 32px; 
+    padding-top: 8px; 
+    padding-bottom: 8px; 
+    background: #662e4c; 
+    border-radius: 32px; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 8px; 
+    display: inline-flex;
+    color: white;
+    font-size: 16px; 
+    font-family: 'Montserrat';
+    font-weight: 600; 
+    cursor: pointer;
+    margin-left: 15px;
+  }
+
+  button.clear:hover{
+    background-color: #2f0722;
+  }
+
+  hr {
+    margin: 30px 0;
+  }
+  
+  .bold-title {
+    font-weight: bold;
+  }
+  
