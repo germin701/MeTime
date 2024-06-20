@@ -12,6 +12,7 @@ import LatestPage from './views/latest';
 import FavoritesPage from './views/favourite';
 import { AuthProvider } from './AuthContext';
 import './App.css';
+import PasswordReset from './views/resetPasswordOTP';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/latest" element={<LatestPage />} />
             <Route path="/favourites" element={<FavoritesPage/>} />
+            <Route path="/resetpasswordOTP" element={<PasswordReset/>} />
           </Routes>
         </div>
       </Router>
