@@ -8,7 +8,8 @@ const cors = require('cors');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -16,6 +17,9 @@ const PORT = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(cors());  // Enable CORS
 
+dotenv.config(); 
+// temporary storage to store OTP
+const otps = new Map();
 // connect to MongoDB
 connectDB().then(() => {
     console.log('Connected to MongoDB');
@@ -200,12 +204,14 @@ app.delete('/api/saveGame', async (req, res) => {
 });
 
 // route to handle updating user details
+// endpoint to handle updating user details
 app.put('/api/updateUser/:username', async (req, res) => {
   try {
       const { username } = req.params;
       const { email, password } = req.body;
       
       // Find the user by their username
+      // find the user by their username
       const user = await User.findOne({ username });
 
       if (!user) {
@@ -213,16 +219,19 @@ app.put('/api/updateUser/:username', async (req, res) => {
       }
 
       // Update email if it is provided
+      // update email if it is provided
       if (email) {
           user.email = email;
       }
 
       // Update password if it is provided
+      // update password if it is provided
       if (password) {
           user.password = await bcrypt.hash(password, 10);
       }
 
       // Save the updated user details
+      // save the updated user details
       await user.save();
 
       res.status(200).json({ email: user.email });
@@ -232,6 +241,97 @@ app.put('/api/updateUser/:username', async (req, res) => {
   }
 });
 
+const transporter = nodemailer.createTransport({
+  pool: true,
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, 
+  auth: {
+    user: process.env.EMAIL_USERNAME, // from .env
+    pass: process.env.EMAIL_PASSWORD
+  },
+});
+
+
+// generate random 6-digit OTP
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000);
+}
+
+// send OTP for sign up
+app.post('/api/sendOTPtoRegister', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // check whether user exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+
+    // generate OTP
+    const otp = generateOTP();
+    // get the time when OTP is sent
+    const createdAt = Date.now();
+
+    otps.set(email, { otp, createdAt });
+
+    //console.log(`Generated OTP for ${email}: ${otp}`);
+
+    // construct email
+    const mailOptions = {
+      from: process.env.EMAIL_USERNAME,
+      to: email,
+      subject: 'Your Registration OTP',
+      text: `Your OTP for registration is: ${otp}. This OTP is valid for 2 minutes.`
+    };
+
+    // send email
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: 'OTP sent successfully.' });
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    res.status(500).json({ message: 'Failed to send OTP.' });
+  }
+});
+
+// verify OTP for sign up
+app.post('/api/verifyOTPtoRegister', async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const storedOtp = otps.get(email);
+
+    if (!storedOtp) {
+      return res.status(400).json({ message: 'Invalid OTP data' });
+    }
+
+    // check for OTP expiration
+    const { otp: storedOtpValue, createdAt } = storedOtp;
+    const currentTime = Date.now();
+    const elapsedTime = (currentTime - createdAt) / 1000;
+
+    if (elapsedTime > 120) {
+      otps.delete(email);
+      return res.status(400).json({ message: 'OTP expired' });
+    }
+
+    // compare the generated and submitted OTP for validation
+    const storedOtpString = String(storedOtpValue);
+    const submittedOTPString = String(otp);
+
+    if (storedOtpString.trim() !== submittedOTPString.trim()) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    otps.delete(email);
+    res.status(200).json({ message: 'OTP verified successfully.' });
+  } catch (error) {
+    console.error('Error verifying OTP:', error.message);
+    res.status(500).json({ message: 'Failed to verify OTP.' });
+  }
+});
 
 // current port
 app.listen(PORT, () => {

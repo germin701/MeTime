@@ -199,7 +199,7 @@ function GamesPage() {
                 ))}
               </select>
               <button className='search' onClick={handleSearch}>Search</button>
-              <button className='clear' onClick={clearFilters}>Clear Filters</button>
+              <button className='clear' onClick={clearFilters}>Clear</button>
             </div>
           </div>
         </div>

@@ -8,22 +8,60 @@ function SignUpPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [otp, setOtp] = useState('');
+    const [step, setStep] = useState(1); // To manage the sign-up step
     const navigate = useNavigate();
 
-    const handleSignUp = async () => {
-        // check empty input fields
-        if (email == "" || username == "" || password == "" || confirmPassword == ""){
-            alert('Please enter all fields');
-            return;
+    const handleSendOTP = async () => {
+        if (email === '' || username === '' || password === '' || confirmPassword === '') {
+          alert('Please enter all fields');
+          return;
         }
-        // check if password and confirm password match
+      
         if (password !== confirmPassword) {
-            alert('Passwords do not match');
-            return;
+          alert('Passwords do not match');
+          return;
         }
-
+      
         try {
-            // insert data to server
+          const response = await axios.post('http://localhost:5000/api/sendOTPtoRegister', { email });
+          setStep(2); // Move to the OTP verification step
+          alert("Email is sent. Please check your inbox to enter the OTP.");
+        } catch (error) {
+          console.error('Failed to send OTP:', error.message);
+          if (error.response && error.response.data) {
+            alert(error.response.data.message); // Show specific error message
+          } else {
+            alert('Failed to send OTP');
+          }
+        }
+      };
+      
+      const handleVerifyOTP = async (submittedOTP) => {
+        console.log('Submitted OTP:', submittedOTP); // log submitted OTP
+        try {
+          const response = await axios.post('http://localhost:5000/api/verifyOTPtoRegister', { email, otp: submittedOTP });
+          console.log(response.data.message);
+      
+          if (response.status === 200) {
+            alert('OTP matched. Proceeding to sign up.');
+            handleSignUp();
+          } else {
+            alert(response.data.message); // Show specific error message
+          }
+        } catch (error) {
+          console.error('Error handling OTP submission:', error);
+          if (error.response && error.response.data) {
+            alert(error.response.data.message); // Show specific error message
+          } else {
+            alert('Failed to verify OTP. Please try again.');
+          }
+        }
+      };
+      
+
+    const handleSignUp = async () => {
+        try {
             const response = await axios.post('http://localhost:5000/api/signup', {
                 email,
                 username,
@@ -34,7 +72,6 @@ function SignUpPage() {
             alert('User registered successfully');
             console.log('User registered successfully:', response.data);
             navigate('/login');
-            
         } catch (error) {
             if (error.response && error.response.status === 400 && error.response.data === 'Email already exists') {
                 alert('User already exists!');
@@ -110,21 +147,14 @@ function SignUpPage() {
                         wordWrap: 'break-word',
                         paddingBottom: '5px'
                     }}>
-                        Sign Up
+                        {step === 1 ? 'Sign Up' : 'Enter OTP'}
                     </div>
-                    <div style={{
-                        flexDirection: 'column',
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-end',
-                        gap: '18px',
-                        display: 'flex',
-                        width: '100%'
-                    }}>
+                    {step === 1 ? (
                         <div style={{
                             flexDirection: 'column',
                             justifyContent: 'flex-start',
-                            alignItems: 'flex-start',
-                            gap: '23px',
+                            alignItems: 'flex-end',
+                            gap: '18px',
                             display: 'flex',
                             width: '100%'
                         }}>
@@ -132,199 +162,269 @@ function SignUpPage() {
                                 flexDirection: 'column',
                                 justifyContent: 'flex-start',
                                 alignItems: 'flex-start',
-                                gap: '4px',
+                                gap: '23px',
                                 display: 'flex',
                                 width: '100%'
                             }}>
                                 <div style={{
+                                    flexDirection: 'column',
                                     justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '10.74px',
-                                    display: 'inline-flex'
+                                    alignItems: 'flex-start',
+                                    gap: '4px',
+                                    display: 'flex',
+                                    width: '100%'
                                 }}>
                                     <div style={{
-                                        color: '#4A3F39',
-                                        fontSize: '18px',
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: '600',
-                                        wordWrap: 'break-word'
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '10.74px',
+                                        display: 'inline-flex'
                                     }}>
-                                        Email
+                                        <div style={{
+                                            color: '#4A3F39',
+                                            fontSize: '18px',
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: '600',
+                                            wordWrap: 'break-word'
+                                        }}>
+                                            Email
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        width: '100%',
+                                        height: '50px',
+                                        padding: '10px',
+                                        background: 'white',
+                                        borderRadius: '8px',
+                                        border: '1px #D0AA8D solid',
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        display: 'inline-flex'
+                                    }}>
+                                        <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" style={{ width: '100%', border: 'none', outline: 'none' }} />
                                     </div>
                                 </div>
                                 <div style={{
-                                    width: '100%',
-                                    height: '50px',
-                                    padding: '10px',
-                                    background: 'white',
-                                    borderRadius: '8px',
-                                    border: '1px #D0AA8D solid',
+                                    flexDirection: 'column',
                                     justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '8px',
-                                    display: 'inline-flex'
-                                }}>
-                                    <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" style={{ width: '100%', border: 'none', outline: 'none' }} />
-                                </div>
-                            </div>
-                            <div style={{
-                                flexDirection: 'column',
-                                justifyContent: 'flex-start',
-                                alignItems: 'flex-start',
-                                gap: '4px',
-                                display: 'flex',
-                                width: '100%'
-                            }}>
-                                <div style={{
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '10.74px',
-                                    display: 'inline-flex'
+                                    alignItems: 'flex-start',
+                                    gap: '4px',
+                                    display: 'flex',
+                                    width: '100%'
                                 }}>
                                     <div style={{
-                                        color: '#4A3F39',
-                                        fontSize: '18px',
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: '600',
-                                        wordWrap: 'break-word'
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '10.74px',
+                                        display: 'inline-flex'
                                     }}>
-                                        Username
+                                        <div style={{
+                                            color: '#4A3F39',
+                                            fontSize: '18px',
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: '600',
+                                            wordWrap: 'break-word'
+                                        }}>
+                                            Username
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        width: '100%',
+                                        height: '50px',
+                                        padding: '10px',
+                                        background: 'white',
+                                        borderRadius: '8px',
+                                        border: '1px #D0AA8D solid',
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        display: 'inline-flex'
+                                    }}>
+                                        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" style={{ width: '100%', border: 'none', outline: 'none' }} />
                                     </div>
                                 </div>
                                 <div style={{
-                                    width: '100%',
-                                    height: '50px',
-                                    padding: '10px',
-                                    background: 'white',
-                                    borderRadius: '8px',
-                                    border: '1px #D0AA8D solid',
+                                    flexDirection: 'column',
                                     justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '8px',
-                                    display: 'inline-flex'
-                                }}>
-                                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" style={{ width: '100%', border: 'none', outline: 'none' }} />
-                                </div>
-                            </div>
-                            <div style={{
-                                flexDirection: 'column',
-                                justifyContent: 'flex-start',
-                                alignItems: 'flex-start',
-                                gap: '4px',
-                                display: 'flex',
-                                width: '100%'
-                            }}>
-                                <div style={{
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '10.74px',
-                                    display: 'inline-flex'
+                                    alignItems: 'flex-start',
+                                    gap: '4px',
+                                    display: 'flex',
+                                    width: '100%'
                                 }}>
                                     <div style={{
-                                        color: '#4A3F39',
-                                        fontSize: '18px',
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: '600',
-                                        wordWrap: 'break-word'
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '10.74px',
+                                        display: 'inline-flex'
                                     }}>
-                                        Password
+                                        <div style={{
+                                            color: '#4A3F39',
+                                            fontSize: '18px',
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: '600',
+                                            wordWrap: 'break-word'
+                                        }}>
+                                            Password
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        width: '100%',
+                                        height: '50px',
+                                        padding: '10px',
+                                        background: 'white',
+                                        borderRadius: '8px',
+                                        border: '1px #D0AA8D solid',
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        display: 'inline-flex'
+                                    }}>
+                                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" style={{ width: '100%', border: 'none', outline: 'none' }} />
                                     </div>
                                 </div>
                                 <div style={{
-                                    width: '100%',
-                                    height: '50px',
-                                    padding: '10px',
-                                    background: 'white',
-                                    borderRadius: '8px',
-                                    border: '1px #D0AA8D solid',
+                                    flexDirection: 'column',
                                     justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '8px',
-                                    display: 'inline-flex'
-                                }}>
-                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" style={{ width: '100%', border: 'none', outline: 'none' }} />
-                                </div>
-                            </div>
-                            <div style={{
-                                flexDirection: 'column',
-                                justifyContent: 'flex-start',
-                                alignItems: 'flex-start',
-                                gap: '4px',
-                                display: 'flex',
-                                width: '100%'
-                            }}>
-                                <div style={{
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '10.74px',
-                                    display: 'inline-flex'
+                                    alignItems: 'flex-start',
+                                    gap: '4px',
+                                    display: 'flex',
+                                    width: '100%'
                                 }}>
                                     <div style={{
-                                        color: '#4A3F39',
-                                        fontSize: '18px',
-                                        fontFamily: 'Montserrat',
-                                        fontWeight: '600',
-                                        wordWrap: 'break-word'
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '10.74px',
+                                        display: 'inline-flex'
                                     }}>
-                                        Confirm Password
+                                        <div style={{
+                                            color: '#4A3F39',
+                                            fontSize: '18px',
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: '600',
+                                            wordWrap: 'break-word'
+                                        }}>
+                                            Confirm Password
+                                        </div>
                                     </div>
-                                </div>
-                                <div style={{
-                                    width: '100%',
-                                    height: '50px',
-                                    padding: '10px',
-                                    background: 'white',
-                                    borderRadius: '8px',
-                                    border: '1px #D0AA8D solid',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '8px',
-                                    display: 'inline-flex'
-                                }}>
-                                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" style={{ width: '100%', border: 'none', outline: 'none' }} />
+                                    <div style={{
+                                        width: '100%',
+                                        height: '50px',
+                                        padding: '10px',
+                                        background: 'white',
+                                        borderRadius: '8px',
+                                        border: '1px #D0AA8D solid',
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        display: 'inline-flex'
+                                    }}>
+                                        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" style={{ width: '100%', border: 'none', outline: 'none' }} />
+                                    </div>
                                 </div>
                             </div>
                             <div style={{
-                                width: '80%',
-                                height: '60px',
-                                padding: '8px 32px',
-                                background: '#D0AA8D',
-                                borderRadius: '32px',
+                                height: '48px',
+                                padding: '16px 32px',
+                                background: '#705243',
+                                borderRadius: '8px',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                gap: '8px',
-                                display: 'flex',
-                                marginTop: '20px',
-                                marginLeft: '15px',
-                                cursor: 'pointer',
-                            }}>
-                                <button onClick={handleSignUp} style={{
+                                gap: '10px',
+                                display: 'inline-flex',
+                                cursor: 'pointer'
+                            }} onClick={handleSendOTP}>
+                                <div style={{
                                     color: 'white',
-                                    fontSize: '20px',
+                                    fontSize: '18px',
                                     fontFamily: 'Montserrat',
                                     fontWeight: '600',
-                                    wordWrap: 'break-word',
-                                    border: 'none',
-                                    background: 'transparent',
-                                    cursor: 'pointer',
+                                    wordWrap: 'break-word'
                                 }}>
-                                    SIGN UP
-                                </button>
-                            </div>
-                            <div onClick={() => navigate('/login')} style={{
-                                color: '#4A3F39',
-                                fontSize: '16px',
-                                fontFamily: 'Montserrat',
-                                fontWeight: '500',
-                                textDecoration: 'underline',
-                                cursor: 'pointer',
-                                marginTop: '10px',
-                                marginLeft: '15px',
-                            }}>
-                                Already have an account? LOGIN
+                                    Sign Up
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div style={{
+                            flexDirection: 'column',
+                            justifyContent: 'flex-start',
+                            alignItems: 'flex-end',
+                            gap: '18px',
+                            display: 'flex',
+                            width: '100%'
+                        }}>
+                            <div style={{
+                                flexDirection: 'column',
+                                justifyContent: 'flex-start',
+                                alignItems: 'flex-start',
+                                gap: '23px',
+                                display: 'flex',
+                                width: '100%'
+                            }}>
+                                <div style={{
+                                    flexDirection: 'column',
+                                    justifyContent: 'flex-start',
+                                    alignItems: 'flex-start',
+                                    gap: '4px',
+                                    display: 'flex',
+                                    width: '100%'
+                                }}>
+                                    <div style={{
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '10.74px',
+                                        display: 'inline-flex'
+                                    }}>
+                                        <div style={{
+                                            color: '#4A3F39',
+                                            fontSize: '18px',
+                                            fontFamily: 'Montserrat',
+                                            fontWeight: '600',
+                                            wordWrap: 'break-word'
+                                        }}>
+                                            OTP
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        width: '100%',
+                                        height: '50px',
+                                        padding: '10px',
+                                        background: 'white',
+                                        borderRadius: '8px',
+                                        border: '1px #D0AA8D solid',
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        display: 'inline-flex'
+                                    }}>
+                                        <input type="text" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="Enter OTP" style={{ width: '100%', border: 'none', outline: 'none' }} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div style={{
+                                height: '48px',
+                                padding: '16px 32px',
+                                background: '#705243',
+                                borderRadius: '8px',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '10px',
+                                display: 'inline-flex',
+                                cursor: 'pointer'
+                            }} onClick={() => handleVerifyOTP(otp)}>
+                                <div style={{
+                                    color: 'white',
+                                    fontSize: '18px',
+                                    fontFamily: 'Montserrat',
+                                    fontWeight: '600',
+                                    wordWrap: 'break-word'
+                                }}>
+                                    Verify OTP
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
