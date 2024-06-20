@@ -15,7 +15,7 @@ function RadioPage() {
   const [options, setOptions] = useState({ countries: [], states: [], languages: [] });
   const [noResults, setNoResults] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const stationsPerPage = 200;
+  const stationsPerPage = 10;
 
   // log out
   const logout = () => {
@@ -27,26 +27,27 @@ function RadioPage() {
   };
 
   useEffect(() => {
-    const fetchStations = async () => {
-      try {
-        const response = await axios.get(`https://de1.api.radio-browser.info/json/stations?offset=${(currentPage - 1) * stationsPerPage}&limit=${stationsPerPage}`);
-        setStations(response.data);
-        setFilteredStations(response.data);
-      } catch (error) {
-        console.error("Error fetching stations:", error);
-      }
-    };
-
-    fetchStations();
-    // Fetch stations
-    // axios.get('https://de1.api.radio-browser.info/json/stations?limit=200')
-    //   .then(response => {
+    // const fetchStations = async () => {
+    //   try {
+    //     const response = await axios.get(`https://de1.api.radio-browser.info/json/stations?offset=${(currentPage - 1) * stationsPerPage}&limit=${stationsPerPage}`);
     //     setStations(response.data);
     //     setFilteredStations(response.data);
-    //   })
-    //   .catch(error => {
+    //   } catch (error) {
     //     console.error("Error fetching stations:", error);
-    //   });
+    //   }
+    // };
+
+    // fetchStations();
+
+    //Fetch stations
+    axios.get('https://de1.api.radio-browser.info/json/stations?limit=200')
+      .then(response => {
+        setStations(response.data);
+        setFilteredStations(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching stations:", error);
+      });
 
     // Fetch countries
     axios.get('https://de1.api.radio-browser.info/json/countries')
@@ -74,7 +75,8 @@ function RadioPage() {
       .catch(error => {
         console.error("Error fetching states:", error);
       });
-  }, [currentPage]);
+  // }, [currentPage]);
+  }, []);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -97,6 +99,7 @@ function RadioPage() {
     }
     setFilteredStations(filtered);
     setNoResults(filtered.length === 0);
+    setCurrentPage(1);
   };
 
   const handleSearch = () => {
@@ -107,6 +110,11 @@ function RadioPage() {
     setFilters({ name: '', country: '', state: '', language: '' });
     setFilteredStations(stations);
     setNoResults(false);
+    setCurrentPage(1);
+  };
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const nextPage = () => {
@@ -120,6 +128,13 @@ function RadioPage() {
   const goToPage = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  // Calculate the displayed stations based on current page
+  const indexOfLastStation = currentPage * stationsPerPage;
+  const indexOfFirstStation = indexOfLastStation - stationsPerPage;
+  const currentStations = filteredStations.slice(indexOfFirstStation, indexOfLastStation);
+
+  const totalPages = Math.ceil(filteredStations.length / stationsPerPage);
 
   return (
     <div style={{ width: '100%', backgroundColor: '#FFF4F1', minHeight: '100vh' }}>
@@ -182,41 +197,78 @@ function RadioPage() {
               ))}
             </select>
             <button className='search' onClick={handleSearch} style={{ 'margin-right': '6px' }}>Search</button>
+            <br></br>
             <button className='clear' onClick={clearFilters}>Clear</button>
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          <button onClick={prevPage} disabled={currentPage === 1}>Previous Page</button>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', marginBottom: '10px' }}>
+        {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageClick(index + 1)}
+                style={{
+                  padding: '8px 16px',
+                  margin: '0 4px',
+                  background: currentPage === index + 1 ? '#705243' : '#ccc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer'
+                }}
+              >
+                {index + 1}
+              </button>
+            ))}
+          {/* <button onClick={prevPage} disabled={currentPage === 1}>Previous Page</button>
           {/* Optionally, add buttons for specific pages */}
           {/* Example: 
         {[...Array(Math.ceil(stations.length / stationsPerPage))].map((_, index) => (
           <button key={index} onClick={() => goToPage(index + 1)}>{index + 1}</button>
         ))}
       */}
-          <button onClick={nextPage} disabled={filteredStations.length < stationsPerPage}>Next Page</button>
+          {/* <button onClick={nextPage} disabled={filteredStations.length < stationsPerPage}>Next Page</button> */}
         </div>
         {noResults ? (
           <p>No results found.</p>
         ) : (
           <div className="stations-list">
-            {filteredStations.map(station => (
+            {currentStations.map(station => (
               <div key={station.stationuuid} className="station-item">
-                <img src={station.favicon} alt={station.name} className="station-thumbnail" />
+                <img src={station.favicon || 'default_station_image_url'} alt={station.name} className="station-thumbnail" />
                 <div className="station-details">
-                  <h2 className="station-title">{station.name}</h2>
-                  <hr />
-                  <p><span className="bold-title">Country:</span> {station.country}</p>
-                  <p><span className="bold-title">State:</span> {station.state}</p>
-                  <p><span className="bold-title">Language:</span> {station.language}</p>
-                  <div className="station-buttons">
-                    <a href={station.homepage} target="_blank" rel="noopener noreferrer">
-                      <button className="visit" aria-label={`Visit ${station.name} homepage`}>Visit Homepage</button>
-                    </a>
-                  </div>
+                <h2 className="station-title">{station.name}</h2>
+                   <hr />
+                   <p><span className="bold-title">Country:</span> {station.country}</p>
+                   <p><span className="bold-title">State:</span> {station.state}</p>
+                   <p><span className="bold-title">Language:</span> {station.language}</p>
+                   <div className="station-buttons">
+                     <a href={station.homepage} target="_blank" rel="noopener noreferrer">
+                       <button className="visit" aria-label={`Visit ${station.name} homepage`}>Visit Homepage</button>
+                     </a>
+                   </div>
                 </div>
               </div>
             ))}
           </div>
+          // <div className="stations-list">
+          //   {filteredStations.map(station => (
+          //     <div key={station.stationuuid} className="station-item">
+          //       <img src={station.favicon} alt={station.name} className="station-thumbnail" />
+          //       <div className="station-details">
+          //         <h2 className="station-title">{station.name}</h2>
+          //         <hr />
+          //         <p><span className="bold-title">Country:</span> {station.country}</p>
+          //         <p><span className="bold-title">State:</span> {station.state}</p>
+          //         <p><span className="bold-title">Language:</span> {station.language}</p>
+          //         <div className="station-buttons">
+          //           <a href={station.homepage} target="_blank" rel="noopener noreferrer">
+          //             <button className="visit" aria-label={`Visit ${station.name} homepage`}>Visit Homepage</button>
+          //           </a>
+          //         </div>
+          //       </div>
+          //     </div>
+          //   ))}
+          // </div>
         )}
       </div>
     </div>
