@@ -37,7 +37,7 @@ function BooksPage() {
 
           return {
             id: key,
-            first_sentence: first_sentence,
+            first_sentence: first_sentence || 'Unknown', // Ensure first_sentence has a default value if undefined or null
             author: author_name,
             cover_id: cover_i,
             edition_count: edition_count,
@@ -50,6 +50,7 @@ function BooksPage() {
           };
         });
 
+        testfetchBooks();
         setBooks(newBooks);
         setFilteredBooks(newBooks);
 
@@ -65,6 +66,47 @@ function BooksPage() {
         console.error("Error fetching books:", error);
       }
     };
+
+    
+const testfetchBooks = async () => {
+  try {
+    const response = await axios.get('http://openlibrary.org/search.json?q=So%20long,%20and%20thanks%20for%20all%20the%20fish');
+    const { docs } = response.data;
+
+    const newBooks = docs.slice(0, 500).map((bookSingle) => {
+      const { key, first_sentence, author_name, cover_i, edition_count, first_publish_year, title, publisher, language, time, ratings_average } = bookSingle;
+    
+    let foundText = "";
+    let foundFirstSentence = false;
+    
+      return {
+        id: key,
+        first_sentence: first_sentence || "Unknown",
+        author: author_name,
+        cover_id: cover_i,
+        edition_count: edition_count,
+        first_publish_year: first_publish_year,
+        title: title,
+        publisher: publisher ? publisher.join(', ') : 'Unknown',
+        language: language ? language : ['Unknown'],
+        time: time ? time.join(', ') : 'Unknown',
+        ratings_average: ratings_average || 0
+      };
+    });
+
+    newBooks.forEach(book => {
+      if (book.first_sentence && book.first_sentence !== 'Unknown') {
+        alert(book.first_sentence);
+        foundText = book.first_sentence;
+        foundFirstSentence = true;
+      }
+    });
+
+  } catch (error) {
+    console.error("Error fetching books:", error);
+  }
+};
+
 
     const fetchSavedBooks = async () => {
       try {
@@ -183,7 +225,7 @@ function BooksPage() {
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'center', gap: '8px', display: 'flex' }}>
             <img src={profileIcon} alt="Profile" style={{ width: '25px', height: '25px' }} />
-            <Link to="/profile" style={{ color: 'white', fontSize: '20px', textDecoration: 'none' }}>My Profile</Link>
+            <Link to="/profile" style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', textDecoration: 'none' }}>My Profile</Link>
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'flex-start', paddingRight: '20px', gap: '12px', display: 'flex' }}>
             <div style={{ padding: '0 20px' }}>
