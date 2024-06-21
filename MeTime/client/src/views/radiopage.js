@@ -10,6 +10,7 @@ import { faMusic } from '@fortawesome/free-solid-svg-icons';
 
 function RadioPage() {
   const { authState, setAuthState } = useContext(AuthContext);
+  const { username } = authState;
   const navigate = useNavigate();
   const [stations, setStations] = useState([]);
   const [filteredStations, setFilteredStations] = useState([]);
@@ -20,6 +21,7 @@ function RadioPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [pageRange, setPageRange] = useState([1, 20]);
   const [loading, setLoading] = useState(false);
+  const [savedRadios, setSavedRadios] = useState([]);
   const stationsPerPage = 10;
   const pagesPerRange = 20;
 
@@ -30,6 +32,36 @@ function RadioPage() {
     setAuthState({ isAuthenticated: false, email: '', username: '', password: '' });
     console.log("Log Out");
     navigate('/login');
+  };
+
+  const saveToFavourites = async (station) => {
+    try {
+      console.log({username});
+      console.log('Radio to save:', station);
+      await axios.post('http://localhost:5000/api/saveRadio', {
+        username: username,
+        station: {
+          stationuuid: station.stationuuid,
+          name: station.name,
+          favicon: station.favicon,
+          country: station.country,
+          state: station.state,
+          language: station.language,
+          url_resolved: station.url_resolved,
+          homepage: station.homepage,
+        }
+      });
+
+      // update local state and localStorage
+      const updatedSavedRadios = [...savedRadios, station.stationuuid];
+      setSavedRadios(updatedSavedRadios);
+      localStorage.setItem('savedRadios', JSON.stringify(updatedSavedRadios));
+
+      alert("Radio saved successfully");
+
+    } catch (error) {
+      console.error('Failed to save radio:', error);
+    }
   };
 
   useEffect(() => {
@@ -72,6 +104,17 @@ function RadioPage() {
       }
     };
 
+    // const fetchSavedRadios = async () => {
+    //   try {
+    //     const response = await axios.get(`http://localhost:5000/api/saveRadio?username=${username}`);
+    //     const savedRadioIds = response.data.map(station => station.stationuuid);
+    //     setSavedRadios(savedRadioIds);
+    //     localStorage.setItem('savedRadios', JSON.stringify(savedRadioIds));
+    //   } catch (error) {
+    //     console.error("Error fetching saved radios:", error);
+    //   }
+    // };
+
     // const fetchStations = async () => {
     //   setLoading(true);
     //   try {
@@ -97,7 +140,23 @@ function RadioPage() {
     // };
 
     fetchStations();
+    // fetchSavedRadios();
   }, [currentPage]);
+  // }, [currentPage, username]);
+
+  useEffect(() => {
+    const fetchSavedRadios = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/saveRadio?username=${username}`);
+        const savedRadioIds = response.data.map(station => station.stationuuid);
+        setSavedRadios(savedRadioIds);
+        localStorage.setItem('savedRadios', JSON.stringify(savedRadioIds));
+      } catch (error) {
+        console.error("Error fetching saved radios:", error);
+      }
+    };
+    fetchSavedRadios();
+  }, [username]);
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -418,7 +477,14 @@ function RadioPage() {
                     <a href={station.homepage} target="_blank" rel="noopener noreferrer">
                       <button className="visit" aria-label={`Visit ${station.name} homepage`}>Visit Homepage</button>
                     </a>
-                    <button className="save">Save to Favourites</button>
+                    <button
+                      className="save"
+                      aria-label={`Save ${station.name} to Favourites`}
+                      onClick={() => saveToFavourites(station)}
+                      disabled={savedRadios.includes(station.stationuuid)}
+                    >
+                      {savedRadios.includes(station.stationuuid) ? 'Saved' : 'Save to Favourites'}
+                    </button>
                   </div>
                 </div>
               </div>

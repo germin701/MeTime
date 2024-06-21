@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const User = require('./schema/user.js');
 const SavedGame = require('./schema/game.js');
-const SavedBook = require('./schema/book.js'); // Import SavedBook model
+const SavedBook = require('./schema/book.js');
+const SavedRadio = require('./schema/radio.js');
 const connectDB = require("./dbconn.js");
 const cors = require('cors');
 const crypto = require('crypto');
@@ -283,6 +284,85 @@ app.delete('/api/saveBook', async (req, res) => {
     console.error('Failed to delete book:', error.message); 
     res.status(500).send('Failed to delete book');
   }
+});
+
+// route to handle saving of a radio to the user's favorites
+app.post('/api/saveRadio', async (req, res) => {
+  try {
+    const { username, station } = req.body;
+
+    if (!username || !station) {
+      return res.status(400).send('Invalid request body');
+    }
+
+    // check if the radio is already saved by the user
+    const existingSavedRadio = await SavedRadio.findOne({ username, id: station.stationuuid });
+    if (existingSavedRadio) {
+      return res.status(400).send('Radio already saved to favorites');
+    }
+
+    // create a new saved radio
+    const newSavedRadio = new SavedRadio({
+      username,
+      stationuuid: station.stationuuid,
+      name: station.name,
+      favicon: station.favicon,
+      country: station.country,
+      state: station.state,
+      language: station.language,
+      url_resolved: station.url_resolved,
+      homepage: station.homepage,
+    });
+
+    // save the radio to the database
+    await newSavedRadio.save();
+
+    res.status(201).send('Radio saved to favorites successfully');
+  } catch (error) {
+    console.error('Failed to save radio:', error.message);
+    res.status(500).send('Failed to save radio');
+  }
+});
+
+// route to get saved radios for a user
+app.get('/api/saveRadio', async (req, res) => {
+try {
+  const { username } = req.query;
+
+  if (!username) {
+    return res.status(400).send('Username is required');
+  }
+
+  const savedRadios = await SavedRadio.find({ username });
+
+  res.status(200).json(SavedRadio);
+} catch (error) {
+  console.error('Failed to fetch saved radios:', error.message); 
+  res.status(500).send('Failed to fetch saved radios');
+}
+});
+
+// route to handle deleting a saved radio from the user's favorites
+app.delete('/api/saveRadio', async (req, res) => {
+try {
+  const { username, radioId } = req.query;
+
+  if (!username || !radioId) {
+    return res.status(400).send('Username and radioId are required');
+  }
+
+  // find the radio using username followed by radio ID
+  const result = await SavedRadio.findOneAndDelete({ username, id: radioId });
+
+  if (!result) {
+    return res.status(404).send('Radio not found');
+  }
+
+  res.status(200).send('Radio deleted successfully');
+} catch (error) {
+  console.error('Failed to delete radio:', error.message); 
+  res.status(500).send('Failed to delete radio');
+}
 });
 
 // route to handle updating user details
