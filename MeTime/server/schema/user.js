@@ -20,7 +20,16 @@ const UserSchema = new Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    otp: { 
+        type: String,
+        default: ''
+    },
+    otpExpiresAt: { 
+        type: Number,
+        default: ''
+      }
+
 }, {
     collection: 'user_info'
 });
