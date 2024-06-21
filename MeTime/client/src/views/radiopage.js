@@ -36,8 +36,6 @@ function RadioPage() {
 
   const saveToFavourites = async (station) => {
     try {
-      console.log({username});
-      console.log('Radio to save:', station);
       await axios.post('http://localhost:5000/api/saveRadio', {
         username: username,
         station: {

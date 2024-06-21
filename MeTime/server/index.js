@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 const User = require('./schema/user.js');
 const SavedGame = require('./schema/game.js');
 const SavedBook = require('./schema/book.js');
@@ -19,76 +18,76 @@ const PORT = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(cors());  // Enable CORS
 
-dotenv.config(); 
+dotenv.config();
 // temporary storage to store OTP
 const otps = new Map();
 // connect to MongoDB
 connectDB().then(() => {
-    console.log('Connected to MongoDB');
+  console.log('Connected to MongoDB');
 }).catch((err) => {
-    console.error('Failed to connect to MongoDB', err);
+  console.error('Failed to connect to MongoDB', err);
 });
 
 // route to handle user registration
 app.post('/api/signup', async (req, res) => {
-    try {
-        const { email, username, password, confirmPassword } = req.body;
+  try {
+    const { email, username, password, confirmPassword } = req.body;
 
-        // check if password and confirmPassword match
-        if (password !== confirmPassword) {
-            return res.status(400).send('Passwords do not match');
-        }
-
-        // check if email already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).send('Email already exists');
-        }
-
-        // hash the password while storing in database
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // generate a new UUID ( user ID) for each user using crypto 
-        const id = crypto.randomBytes(16).toString('hex');
-
-        // create a new user
-        const newUser = new User({ _id: id, email, username, password: hashedPassword });
-
-        // save the user to the database
-        await newUser.save();
-
-        res.status(201).send('User registered successfully');
-    } catch (error) {
-        console.error('Failed to register user:', error);
-        res.status(500).send('Failed to register user');
+    // check if password and confirmPassword match
+    if (password !== confirmPassword) {
+      return res.status(400).send('Passwords do not match');
     }
+
+    // check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).send('Email already exists');
+    }
+
+    // hash the password while storing in database
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // generate a new UUID ( user ID) for each user using crypto 
+    const id = crypto.randomBytes(16).toString('hex');
+
+    // create a new user
+    const newUser = new User({ _id: id, email, username, password: hashedPassword });
+
+    // save the user to the database
+    await newUser.save();
+
+    res.status(201).send('User registered successfully');
+  } catch (error) {
+    console.error('Failed to register user:', error);
+    res.status(500).send('Failed to register user');
+  }
 });
 
 // route to handle user login
 app.post('/api/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        // check if the user exists
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).send('Invalid email or password');
-        }
-
-        // check if the password is correct
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).send('Invalid email or password');
-        }
-
-        // generate a token once logged in successfully
-        const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '24h' });
-
-        res.status(200).json({ message: 'Login successful', token });
-    } catch (error) {
-        console.error('Failed to log in:', error);
-        res.status(500).send('Failed to log in');
+    // check if the user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).send('Invalid email or password');
     }
+
+    // check if the password is correct
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).send('Invalid email or password');
+    }
+
+    // generate a token once logged in successfully
+    const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '24h' });
+
+    res.status(200).json({ message: 'Login successful', token });
+  } catch (error) {
+    console.error('Failed to log in:', error);
+    res.status(500).send('Failed to log in');
+  }
 });
 
 // endpoint to get the username by email
@@ -109,60 +108,60 @@ app.get('/api/getUsername', async (req, res) => {
 
 // endpoint to get the user ID by email
 app.get('/api/getUserId', async (req, res) => {
-    const email = req.query.email;
-  
-    try {
-      const user = await User.findOne({ email });
-      if (user) {
-        res.json({ userId: user._id });
-      } else {
-        res.status(404).json({ message: 'User not found' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+  const email = req.query.email;
+
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      res.json({ userId: user._id });
+    } else {
+      res.status(404).json({ message: 'User not found' });
     }
-  });
-  
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // route to handle saving of a game to the user's favorites
 app.post('/api/saveGame', async (req, res) => {
-    try {
-      const { username, game } = req.body; // extract game from req.body
-  
-      if (!username || !game) {
-        return res.status(400).send('Invalid request body');
-      }
-  
-      // check if the game is already saved by the user
-      const existingSavedGame = await SavedGame.findOne({ username, id: game.id });
-      if (existingSavedGame) {
-        return res.status(400).send('Game already saved to favorites');
-      }
-  
-      // create a new saved game
-      const newSavedGame = new SavedGame({
-        username,
-        id: game.id,
-        title: game.title,
-        genre: game.genre,
-        platform: game.platform,
-        publisher: game.publisher,
-        developer: game.developer,
-        release_date: game.release_date,
-        thumbnail: game.thumbnail,
-        short_description: game.short_description,
-        game_url: game.game_url,
-      });
-  
-      // save the game to the database
-      await newSavedGame.save();
-  
-      res.status(201).send('Game saved to favorites successfully');
-    } catch (error) {
-      console.error('Failed to save game:', error.message); // Log the error message
-      res.status(500).send('Failed to save game');
+  try {
+    const { username, game } = req.body; // extract game from req.body
+
+    if (!username || !game) {
+      return res.status(400).send('Invalid request body');
     }
-  });
-  
+
+    // check if the game is already saved by the user
+    const existingSavedGame = await SavedGame.findOne({ username, id: game.id });
+    if (existingSavedGame) {
+      return res.status(400).send('Game already saved to favorites');
+    }
+
+    // create a new saved game
+    const newSavedGame = new SavedGame({
+      username,
+      id: game.id,
+      title: game.title,
+      genre: game.genre,
+      platform: game.platform,
+      publisher: game.publisher,
+      developer: game.developer,
+      release_date: game.release_date,
+      thumbnail: game.thumbnail,
+      short_description: game.short_description,
+      game_url: game.game_url,
+    });
+
+    // save the game to the database
+    await newSavedGame.save();
+
+    res.status(201).send('Game saved to favorites successfully');
+  } catch (error) {
+    console.error('Failed to save game:', error.message); // Log the error message
+    res.status(500).send('Failed to save game');
+  }
+});
+
 // route to get saved games for a user
 app.get('/api/saveGame', async (req, res) => {
   try {
@@ -176,7 +175,7 @@ app.get('/api/saveGame', async (req, res) => {
 
     res.status(200).json(savedGames);
   } catch (error) {
-    console.error('Failed to fetch saved games:', error.message); 
+    console.error('Failed to fetch saved games:', error.message);
     res.status(500).send('Failed to fetch saved games');
   }
 });
@@ -199,52 +198,52 @@ app.delete('/api/saveGame', async (req, res) => {
 
     res.status(200).send('Game deleted successfully');
   } catch (error) {
-    console.error('Failed to delete game:', error.message); 
+    console.error('Failed to delete game:', error.message);
     res.status(500).send('Failed to delete game');
   }
 });
 
 // route to handle saving of a book to the user's favorites
 app.post('/api/saveBook', async (req, res) => {
-    try {
-      const { username, book } = req.body; // extract book from req.body
-  
-      if (!username || !book) {
-        return res.status(400).send('Invalid request body');
-      }
-  
-      // check if the book is already saved by the user
-      const existingSavedBook = await SavedBook.findOne({ username, id: book.id });
-      if (existingSavedBook) {
-        return res.status(400).send('Book already saved to favorites');
-      }
-  
-      // create a new saved book
-      const newSavedBook = new SavedBook({
-        username,
-        id: book.id,
-        title: book.title,
-        first_sentence: book.first_sentence,
-        author: book.author,
-        cover_id: book.cover_id,
-        edition_count: book.edition_count,
-        first_publish_year: book.first_publish_year,
-        publisher: book.publisher,
-        language: book.language,
-        time: book.time,
-        ratings_average: book.ratings_average,
-      });
-  
-      // save the book to the database
-      await newSavedBook.save();
-  
-      res.status(201).send('Book saved to favorites successfully');
-    } catch (error) {
-      console.error('Failed to save book:', error.message); // Log the error message
-      res.status(500).send('Failed to save book');
+  try {
+    const { username, book } = req.body; // extract book from req.body
+
+    if (!username || !book) {
+      return res.status(400).send('Invalid request body');
     }
-  });
-  
+
+    // check if the book is already saved by the user
+    const existingSavedBook = await SavedBook.findOne({ username, id: book.id });
+    if (existingSavedBook) {
+      return res.status(400).send('Book already saved to favorites');
+    }
+
+    // create a new saved book
+    const newSavedBook = new SavedBook({
+      username,
+      id: book.id,
+      title: book.title,
+      first_sentence: book.first_sentence,
+      author: book.author,
+      cover_id: book.cover_id,
+      edition_count: book.edition_count,
+      first_publish_year: book.first_publish_year,
+      publisher: book.publisher,
+      language: book.language,
+      time: book.time,
+      ratings_average: book.ratings_average,
+    });
+
+    // save the book to the database
+    await newSavedBook.save();
+
+    res.status(201).send('Book saved to favorites successfully');
+  } catch (error) {
+    console.error('Failed to save book:', error.message); // Log the error message
+    res.status(500).send('Failed to save book');
+  }
+});
+
 // route to get saved books for a user
 app.get('/api/saveBook', async (req, res) => {
   try {
@@ -258,7 +257,7 @@ app.get('/api/saveBook', async (req, res) => {
 
     res.status(200).json(savedBooks);
   } catch (error) {
-    console.error('Failed to fetch saved books:', error.message); 
+    console.error('Failed to fetch saved books:', error.message);
     res.status(500).send('Failed to fetch saved books');
   }
 });
@@ -281,7 +280,7 @@ app.delete('/api/saveBook', async (req, res) => {
 
     res.status(200).send('Book deleted successfully');
   } catch (error) {
-    console.error('Failed to delete book:', error.message); 
+    console.error('Failed to delete book:', error.message);
     res.status(500).send('Failed to delete book');
   }
 });
@@ -326,75 +325,75 @@ app.post('/api/saveRadio', async (req, res) => {
 
 // route to get saved radios for a user
 app.get('/api/saveRadio', async (req, res) => {
-try {
-  const { username } = req.query;
+  try {
+    const { username } = req.query;
 
-  if (!username) {
-    return res.status(400).send('Username is required');
+    if (!username) {
+      return res.status(400).send('Username is required');
+    }
+
+    const savedRadios = await SavedRadio.find({ username });
+
+    res.status(200).json(savedRadios);
+  } catch (error) {
+    console.error('Failed to fetch saved radios:', error.message);
+    res.status(500).send('Failed to fetch saved radios');
   }
-
-  const savedRadios = await SavedRadio.find({ username });
-
-  res.status(200).json(SavedRadio);
-} catch (error) {
-  console.error('Failed to fetch saved radios:', error.message); 
-  res.status(500).send('Failed to fetch saved radios');
-}
 });
 
 // route to handle deleting a saved radio from the user's favorites
 app.delete('/api/saveRadio', async (req, res) => {
-try {
-  const { username, radioId } = req.query;
+  try {
+    const { username, radioId } = req.query;
 
-  if (!username || !radioId) {
-    return res.status(400).send('Username and radioId are required');
+    if (!username || !radioId) {
+      return res.status(400).send('Username and radioId are required');
+    }
+
+    // find the radio using username followed by radio ID
+    const result = await SavedRadio.findOneAndDelete({ username, stationuuid: radioId });
+
+    if (!result) {
+      return res.status(404).send('Radio not found');
+    }
+
+    res.status(200).send('Radio deleted successfully');
+  } catch (error) {
+    console.error('Failed to delete radio:', error.message);
+    res.status(500).send('Failed to delete radio');
   }
-
-  // find the radio using username followed by radio ID
-  const result = await SavedRadio.findOneAndDelete({ username, id: radioId });
-
-  if (!result) {
-    return res.status(404).send('Radio not found');
-  }
-
-  res.status(200).send('Radio deleted successfully');
-} catch (error) {
-  console.error('Failed to delete radio:', error.message); 
-  res.status(500).send('Failed to delete radio');
-}
 });
 
 // route to handle updating user details
 app.put('/api/updateUser/:username', async (req, res) => {
   try {
-      const { username } = req.params;
-      const { email, password } = req.body;
-      
-      // Find the user by their username
-      const user = await User.findOne({ username });
+    const { username } = req.params;
+    const { email, password } = req.body;
 
-      if (!user) {
-          return res.status(404).send('User not found');
-      }
+    // Find the user by their username
+    const user = await User.findOne({ username });
 
-      // Update email if it is provided
-      if (email) {
-          user.email = email;
-      }
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
 
-      // Update password if it is provided
-      if (password) {
-          user.password = await bcrypt.hash(password, 10);
-      }
+    // Update email if it is provided
+    if (email) {
+      user.email = email;
+    }
 
-      // Save the updated user details
-      await user.save();
+    // Update password if it is provided
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
 
-      res.status(200).json({ email: user.email });
+    // Save the updated user details
+    await user.save();
+
+    res.status(200).json({ email: user.email });
   } catch (error) {
-      console.error('Failed to update user:', error);
-      res.status(500).send('Failed to update user');
+    console.error('Failed to update user:', error);
+    res.status(500).send('Failed to update user');
   }
 });
 
@@ -402,7 +401,7 @@ const transporter = nodemailer.createTransport({
   pool: true,
   host: "smtp.gmail.com",
   port: 465,
-  secure: true, 
+  secure: true,
   auth: {
     user: process.env.EMAIL_USERNAME, // from .env
     pass: process.env.EMAIL_PASSWORD
@@ -512,23 +511,23 @@ app.put('/api/resetPassword/:email', async (req, res) => {
   const { password } = req.body;
 
   try {
-      // find the user by their username
-      const user = await User.findOne({ email });
+    // find the user by their username
+    const user = await User.findOne({ email });
 
-      if (!user) {
-          return res.status(404).send('User not found');
-      }
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
 
-      // update password and hash it
-      user.password = await bcrypt.hash(password, 10);
+    // update password and hash it
+    user.password = await bcrypt.hash(password, 10);
 
-      // save the updated password
-      await user.save();
+    // save the updated password
+    await user.save();
 
-      res.status(200).json({ message: 'Password updated successfully' });
+    res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {
-      console.error('Failed to update user password:', error);
-      res.status(500).send('Failed to update user password');
+    console.error('Failed to update user password:', error);
+    res.status(500).send('Failed to update user password');
   }
 });
 
@@ -609,5 +608,5 @@ app.post('/api/verifyOTPtoRegister', async (req, res) => {
 
 // current port
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

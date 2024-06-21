@@ -21,7 +21,7 @@ const SavedRadioSchema = new Schema({
         type: String,
         required: false,
     },
-    
+
     country: {
         type: String,
         required: false,
@@ -47,7 +47,7 @@ const SavedRadioSchema = new Schema({
         required: false,
     }
 }, {
-    collection: 'saved_radios'  
+    collection: 'saved_radios'
 });
 
 const SavedRadio = mongoose.model('SavedRadio', SavedRadioSchema);

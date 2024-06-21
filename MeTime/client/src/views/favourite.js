@@ -4,6 +4,8 @@ import { AuthContext } from '../AuthContext';
 import saveIcon from '../assets/favourite.png';
 import profileIcon from '../assets/profilepic.png';
 import { Link, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMusic } from '@fortawesome/free-solid-svg-icons';
 import './favourite.css';
 
 // User's Favourite Collection Page
@@ -33,14 +35,18 @@ function FavoritesPage() {
           setSavedGames(responseGames.data);
           break;
         case 'books':
-          // fetch the list of saved games
+          // fetch the list of saved books
           const responseBooks = await axios.get('http://localhost:5000/api/saveBook', {
             params: { username, category: 'books' }
           });
           setSavedBooks(responseBooks.data);
           break;
         case 'radios':
-          //
+          // fetch the list of saved games
+          const responseRadios = await axios.get('http://localhost:5000/api/saveRadio', {
+            params: { username, category: 'radios' }
+          });
+          setSavedRadios(responseRadios.data);
           break;
         case 'news':
           //
@@ -68,16 +74,17 @@ function FavoritesPage() {
         // contruct the url to search for selected game
         url = `http://localhost:5000/api/saveGame?username=${username}&gameId=${itemId}`;
         break;
-        case 'books':
-          // contruct the url to search for selected book
-          url = `http://localhost:5000/api/saveBook?username=${username}&bookId=${itemId}`;
-          break;
-    /*    case 'radios':
-         
-          break;
-        case 'news':
-        
-          break;*/
+      case 'books':
+        // contruct the url to search for selected book
+        url = `http://localhost:5000/api/saveBook?username=${username}&bookId=${itemId}`;
+        break;
+      case 'radios':
+        // contruct the url to search for selected radio
+        url = `http://localhost:5000/api/saveRadio?username=${username}&radioId=${itemId}`;
+        break;
+      /*case 'news':
+          
+            break;*/
       default:
         console.error('Unknown category:', category);
         return;
@@ -94,17 +101,19 @@ function FavoritesPage() {
             const updatedSavedGames = savedGames.filter(game => game.id !== itemId);
             setSavedGames(updatedSavedGames);
             break;
-             case 'books':
-              // update the book list after deletions
-              const updatedSavedBooks = savedBooks.filter(book => book.id !== itemId);
-              setSavedBooks(updatedSavedBooks);
-               break;
-          /*   case 'radios':
-               
-               break;
-             case 'news':
-               
-               break;*/
+          case 'books':
+            // update the book list after deletions
+            const updatedSavedBooks = savedBooks.filter(book => book.id !== itemId);
+            setSavedBooks(updatedSavedBooks);
+            break;
+          case 'radios':
+            // update the radio list after deletions
+            const updatedSavedRadios = savedRadios.filter(radio => radio.stationuuid !== itemId);
+            setSavedRadios(updatedSavedRadios);
+            break;
+          /*case 'news':
+            
+            break;*/
           default:
             console.error('Unknown category:', category);
             break;
@@ -136,7 +145,10 @@ function FavoritesPage() {
     else if (category === 'books') {
       fetchItems('books');
     }
-    // books, news, radios here
+    else if (category === 'radios') {
+      fetchItems('radios');
+    }
+    // news here
   };
 
   // log out
@@ -229,9 +241,43 @@ function FavoritesPage() {
           </div>
         );
       case 'radios':
-        return (
+        return savedRadios.length > 0 ? (
+          <div className="stations-list">
+            {savedRadios.map(station => (
+              <div key={station.stationuuid} className="station-item">
+                <img src={station.favicon || 'default_station_image_url'} alt={'No Image'} className="station-thumbnail" />
+                <div className="station-details">
+                  <h2 className="station-title">{station.name.trim() || '(No Title Provided)'}</h2>
+                  <hr />
+                  <p><span className="bold-title">Country:</span> {station.country || 'N/A'}</p>
+                  <p><span className="bold-title">State:</span> {station.state || 'N/A'}</p>
+                  <p><span className="bold-title">Language:</span> {station.language || 'N/A'}</p>
+                  <div className="station-buttons">
+                    <a href={station.url_resolved} target="_blank" rel="noopener noreferrer">
+                      <button className="listen">
+                        <FontAwesomeIcon icon={faMusic} style={{ marginRight: '8px' }} />
+                        Listen Now
+                      </button>
+                    </a>
+                    <a href={station.homepage} target="_blank" rel="noopener noreferrer">
+                      <button className="visit" aria-label={`Visit ${station.name} homepage`}>Visit Homepage</button>
+                    </a>
+                    <button
+                      className="delete"
+                      aria-label={`Delete ${station.name}`}
+                      onClick={() => handleDeleteItem(station.stationuuid, 'radios')}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          // if there's no saved books
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p>No saved radios found.</p>
+            <p>No saved books found.</p>
           </div>
         );
       case 'news':
