@@ -5,6 +5,8 @@ import saveIcon from '../assets/favourite.png';
 import profileIcon from '../assets/profilepic.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMusic } from '@fortawesome/free-solid-svg-icons';
 
 function RadioPage() {
   const { authState, setAuthState } = useContext(AuthContext);
@@ -394,6 +396,12 @@ function RadioPage() {
                     <p><span className="bold-title">State:</span> {station.state || 'N/A'}</p>
                     <p><span className="bold-title">Language:</span> {station.language || 'N/A'}</p>
                     <div className="station-buttons">
+                      <a href={station.url_resolved} target="_blank" rel="noopener noreferrer">
+                        <button className="listen">
+                          <FontAwesomeIcon icon={faMusic} style={{ marginRight: '8px' }} />
+                          Listen Now
+                        </button>
+                      </a>
                       <a href={station.homepage} target="_blank" rel="noopener noreferrer">
                         <button className="visit" aria-label={`Visit ${station.name} homepage`}>Visit Homepage</button>
                       </a>

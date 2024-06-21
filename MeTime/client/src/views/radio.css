@@ -69,6 +69,19 @@ button.visit:hover {
 background-color: #496987;
 }
 
+button.listen {
+    padding: 10px 15px;
+    border: none;
+    background-color: #17a2b8;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+button.listen:hover {
+background-color: #496987;
+}
+
 hr {
   margin: 10px 0;
 }
