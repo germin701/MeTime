@@ -1,6 +1,6 @@
 # MeTime
 
-MeTime is an all-in-one entertainment platform designed to enrich your free time with the latest news, favourite radio stations, engaging books, and interactive games. This platform is developed using the Web API concept with the framework of MERN stack (React, MongoDB, Node.js and Express). 
+MeTime is an all-in-one entertainment platform designed to enrich your free time with the latest news, favourite radio stations, engaging books, and interactive games. This platform is developed using the Web API concept with the framework of MERN stack (MongoDB, Express, React and Node.js). 
 
 **Command to run the program:** npm start
 
