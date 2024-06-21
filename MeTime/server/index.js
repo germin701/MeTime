@@ -30,36 +30,60 @@ connectDB().then(() => {
 
 // route to handle user registration
 app.post('/api/signup', async (req, res) => {
+    try {
+        const { email, username, password, confirmPassword } = req.body;
+
+        // check if password and confirmPassword match
+        if (password !== confirmPassword) {
+            return res.status(400).send('Passwords do not match');
+        }
+
+        // check if email already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).send('Email already exists');
+        }
+
+        // hash the password while storing in database
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // generate a new UUID ( user ID) for each user using crypto 
+        const id = crypto.randomBytes(16).toString('hex');
+
+        // create a new user
+        const newUser = new User({ _id: id, email, username, password: hashedPassword });
+
+        // save the user to the database
+        await newUser.save();
+
+        res.status(201).send('User registered successfully');
+    } catch (error) {
+        console.error('Failed to register user:', error);
+        res.status(500).send('Failed to register user');
+    }
+});
+
+// check if email or username exists
+app.post('/api/checkUserExistence', async (req, res) => {
   try {
-    const { email, username, password, confirmPassword } = req.body;
+      const { email, username } = req.body;
 
-    // check if password and confirmPassword match
-    if (password !== confirmPassword) {
-      return res.status(400).send('Passwords do not match');
-    }
+      // check if email exists
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+          return res.status(400).json({ message: 'Email already exists' });
+      }
 
-    // check if email already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).send('Email already exists');
-    }
+      // check if username exists
+      const existingUsername = await User.findOne({ username });
+      if (existingUsername) {
+          return res.status(400).json({ message: 'Username already exists' });
+      }
 
-    // hash the password while storing in database
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // generate a new UUID ( user ID) for each user using crypto 
-    const id = crypto.randomBytes(16).toString('hex');
-
-    // create a new user
-    const newUser = new User({ _id: id, email, username, password: hashedPassword });
-
-    // save the user to the database
-    await newUser.save();
-
-    res.status(201).send('User registered successfully');
+      res.status(200).json({ message: 'Email and username are available' });
   } catch (error) {
-    console.error('Failed to register user:', error);
-    res.status(500).send('Failed to register user');
+      console.error('Failed to check user existence:', error);
+      res.status(500).json({ message: 'Failed to check user existence' });
   }
 });
 
