@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const User = require('./schema/user.js');
 const SavedGame = require('./schema/game.js');
+const SavedBook = require('./schema/book.js'); // Import SavedBook model
 const connectDB = require("./dbconn.js");
 const cors = require('cors');
 const crypto = require('crypto');
@@ -121,7 +122,6 @@ app.get('/api/getUserId', async (req, res) => {
     }
   });
   
-
 // route to handle saving of a game to the user's favorites
 app.post('/api/saveGame', async (req, res) => {
     try {
@@ -203,15 +203,95 @@ app.delete('/api/saveGame', async (req, res) => {
   }
 });
 
+// route to handle saving of a book to the user's favorites
+app.post('/api/saveBook', async (req, res) => {
+    try {
+      const { username, book } = req.body; // extract book from req.body
+  
+      if (!username || !book) {
+        return res.status(400).send('Invalid request body');
+      }
+  
+      // check if the book is already saved by the user
+      const existingSavedBook = await SavedBook.findOne({ username, id: book.id });
+      if (existingSavedBook) {
+        return res.status(400).send('Book already saved to favorites');
+      }
+  
+      // create a new saved book
+      const newSavedBook = new SavedBook({
+        username,
+        id: book.id,
+        title: book.title,
+        first_sentence: book.first_sentence,
+        author: book.author,
+        cover_id: book.cover_id,
+        edition_count: book.edition_count,
+        first_publish_year: book.first_publish_year,
+        publisher: book.publisher,
+        language: book.language,
+        time: book.time,
+        ratings_average: book.ratings_average,
+      });
+  
+      // save the book to the database
+      await newSavedBook.save();
+  
+      res.status(201).send('Book saved to favorites successfully');
+    } catch (error) {
+      console.error('Failed to save book:', error.message); // Log the error message
+      res.status(500).send('Failed to save book');
+    }
+  });
+  
+// route to get saved books for a user
+app.get('/api/saveBook', async (req, res) => {
+  try {
+    const { username } = req.query;
+
+    if (!username) {
+      return res.status(400).send('Username is required');
+    }
+
+    const savedBooks = await SavedBook.find({ username });
+
+    res.status(200).json(savedBooks);
+  } catch (error) {
+    console.error('Failed to fetch saved books:', error.message); 
+    res.status(500).send('Failed to fetch saved books');
+  }
+});
+
+// route to handle deleting a saved book from the user's favorites
+app.delete('/api/saveBook', async (req, res) => {
+  try {
+    const { username, bookId } = req.query;
+
+    if (!username || !bookId) {
+      return res.status(400).send('Username and bookId are required');
+    }
+
+    // find the book using username followed by book ID
+    const result = await SavedBook.findOneAndDelete({ username, id: bookId });
+
+    if (!result) {
+      return res.status(404).send('Book not found');
+    }
+
+    res.status(200).send('Book deleted successfully');
+  } catch (error) {
+    console.error('Failed to delete book:', error.message); 
+    res.status(500).send('Failed to delete book');
+  }
+});
+
 // route to handle updating user details
-// endpoint to handle updating user details
 app.put('/api/updateUser/:username', async (req, res) => {
   try {
       const { username } = req.params;
       const { email, password } = req.body;
       
       // Find the user by their username
-      // find the user by their username
       const user = await User.findOne({ username });
 
       if (!user) {
@@ -219,19 +299,16 @@ app.put('/api/updateUser/:username', async (req, res) => {
       }
 
       // Update email if it is provided
-      // update email if it is provided
       if (email) {
           user.email = email;
       }
 
       // Update password if it is provided
-      // update password if it is provided
       if (password) {
           user.password = await bcrypt.hash(password, 10);
       }
 
       // Save the updated user details
-      // save the updated user details
       await user.save();
 
       res.status(200).json({ email: user.email });

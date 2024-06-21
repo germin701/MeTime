@@ -15,7 +15,9 @@ function BooksPage() {
   const [options, setOptions] = useState({ ratings: [1, 2, 3, 4, 5], languages: [], firstPublishYears: [] });
   const [noResults, setNoResults] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [savedBooks, setSavedBooks] = useState([]);
   const booksPerPage = 10;
+  const { username } = authState;
 
   // log out
   const logout = () => {
@@ -31,17 +33,19 @@ function BooksPage() {
         const { docs } = response.data;
 
         const newBooks = docs.slice(0, 500).map((bookSingle) => {
-          const { key, author_name, cover_i, edition_count, first_publish_year, title, publisher, language, ratings_average } = bookSingle;
+          const { key, first_sentence, author_name, cover_i, edition_count, first_publish_year, title, publisher, language, time, ratings_average } = bookSingle;
 
           return {
             id: key,
+            first_sentence: first_sentence,
             author: author_name,
             cover_id: cover_i,
             edition_count: edition_count,
             first_publish_year: first_publish_year,
             title: title,
             publisher: publisher ? publisher.join(', ') : 'Unknown',
-            language: language ? language : ['Unknown'], // Ensure language is an array
+            language: language ? language : ['Unknown'],
+            time: time ? time.join(', ') : 'Unknown',
             ratings_average: ratings_average || 0
           };
         });
@@ -62,8 +66,20 @@ function BooksPage() {
       }
     };
 
+    const fetchSavedBooks = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/saveBook?username=${username}`);
+        const savedBookIds = response.data.map(book => book.id);
+        setSavedBooks(savedBookIds);
+        localStorage.setItem('savedBooks', JSON.stringify(savedBookIds));
+      } catch (error) {
+        console.error("Error fetching saved books:", error);
+      }
+    };
+
     fetchBooks();
-  }, []);
+    fetchSavedBooks();
+  }, [username]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -104,6 +120,43 @@ function BooksPage() {
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  const saveToFavourites = async (book) => {
+    try {
+      // Make POST request to save the book
+      await axios.post('http://localhost:5000/api/saveBook', {
+        username: username,
+        book: {
+          id: book.id,
+          title: book.title,
+          first_sentence: book.first_sentence, // Ensure first_sentence is converted to string if exists
+          author: book.author,
+          cover_id: book.cover_id,
+          edition_count: book.edition_count,
+          first_publish_year: book.first_publish_year,
+          publisher: book.publisher,
+          language: book.language,
+          time: book.time,
+          ratings_average: book.ratings_average
+        }
+      });
+  
+      // Update savedBooks state and local storage
+      const updatedSavedBooks = [...savedBooks, book.id];
+      setSavedBooks(updatedSavedBooks);
+      localStorage.setItem('savedBooks', JSON.stringify(updatedSavedBooks));
+  
+      // Notify user
+      alert("Book saved successfully");
+  
+    } catch (error) {
+      // Handle error
+      console.error('Failed to save book:', error);
+      // Optionally notify user about the error
+      alert("Failed to save book. Please try again later.", error);
+    }
+  };
+  
 
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
@@ -148,7 +201,7 @@ function BooksPage() {
             <input
               type="text"
               name="keyword"
-              placeholder="Keyword"
+              placeholder="Books Keyword"
               value={filters.keyword}
               onChange={handleFilterChange}
               style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}
@@ -173,7 +226,7 @@ function BooksPage() {
             </select>
             <button className='search' onClick={handleSearch} style={{ marginRight: '6px' }}>Search</button>
             <br />
-            <button className='clear' onClick={clearFilters}>Clear Filters</button>
+            <button className='clear' onClick={clearFilters}>Clear</button>
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', marginBottom: '10px' }}>
@@ -205,15 +258,23 @@ function BooksPage() {
                 <div className="book-details">
                   <h2 className="book-title">{book.title}</h2>
                   <hr />
+                  <p><span className="bold-title">Description: </span>{book.first_sentence}</p>
                   <p><span className="bold-title">Author: </span>{book.author}</p>
                   <p><span className="bold-title">Published On: </span>{book.first_publish_year}</p>
                   <p><span className="bold-title">Languages Available: </span>{Array.isArray(book.language) ? book.language.join(', ') : book.language}</p>
-                  <p><span className="bold-title">Average Rating: </span>{book.ratings_average}</p>
+                  <p><span className="bold-title">Time: </span>{Array.isArray(book.time) ? book.time.join(', ') : book.time}</p>
+                  <p><span className="bold-title">Average Rating: </span>{book.ratings_average.toFixed(2)}</p>
                   <div className="book-buttons">
                     <a href={`https://openlibrary.org${book.id}`} target="_blank" rel="noopener noreferrer">
                       <button className="view">View Book</button>
                     </a>
-                    <button className="save">Save to Favourites</button>
+                    <button
+                      className="save"
+                      onClick={() => saveToFavourites(book)}
+                      disabled={savedBooks.includes(book.id)}
+                    >
+                      {savedBooks.includes(book.id) ? 'Saved' : 'Save to Favourites'}
+                    </button>
                   </div>
                 </div>
               </div>

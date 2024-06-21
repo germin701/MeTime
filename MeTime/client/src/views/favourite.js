@@ -32,7 +32,11 @@ function FavoritesPage() {
           setSavedGames(responseGames.data);
           break;
         case 'books':
-          //
+          // fetch the list of saved games
+          const responseBooks = await axios.get('http://localhost:5000/api/saveBook', {
+            params: { username, category: 'books' }
+          });
+          setSavedBooks(responseBooks.data);
           break;
         case 'radios':
           //
@@ -63,10 +67,11 @@ function FavoritesPage() {
         // contruct the url to search for selected game
         url = `http://localhost:5000/api/saveGame?username=${username}&gameId=${itemId}`;
         break;
-      /*  case 'books':
-          
+        case 'books':
+          // contruct the url to search for selected book
+          url = `http://localhost:5000/api/saveBook?username=${username}&bookId=${itemId}`;
           break;
-        case 'radios':
+    /*    case 'radios':
          
           break;
         case 'news':
@@ -88,10 +93,12 @@ function FavoritesPage() {
             const updatedSavedGames = savedGames.filter(game => game.id !== itemId);
             setSavedGames(updatedSavedGames);
             break;
-          /*   case 'books':
-               
+             case 'books':
+              // update the book list after deletions
+              const updatedSavedBooks = savedBooks.filter(book => book.id !== itemId);
+              setSavedBooks(updatedSavedBooks);
                break;
-             case 'radios':
+          /*   case 'radios':
                
                break;
              case 'news':
@@ -124,6 +131,9 @@ function FavoritesPage() {
     setSelectedCategory(category);
     if (category === 'games') {
       fetchItems('games');
+    }
+    else if (category === 'books') {
+      fetchItems('books');
     }
     // books, news, radios here
   };
@@ -181,7 +191,38 @@ function FavoritesPage() {
           </div>
         );
       case 'books':
-        return (
+        return savedBooks.length > 0 ? (
+          <div className="books-list">
+            {savedBooks.map(book => (
+              <div key={book.id} className="book-item">
+                <img src={`http://covers.openlibrary.org/b/id/${book.cover_id}-L.jpg`} alt={book.title} className="book-thumbnail" />
+                <div className="book-details">
+                  <h2 className="book-title">{book.title}</h2>
+                  <hr />
+                  <p><span className="bold-title">Description: </span>{book.first_sentence}</p>
+                  <p><span className="bold-title">Author: </span>{book.author}</p>
+                  <p><span className="bold-title">Published On: </span>{book.first_publish_year}</p>
+                  <p><span className="bold-title">Languages Available: </span>{Array.isArray(book.language) ? book.language.join(', ') : book.language}</p>
+                  <p><span className="bold-title">Time: </span>{Array.isArray(book.time) ? book.time.join(', ') : book.time}</p>
+                  <p><span className="bold-title">Average Rating: </span>{book.ratings_average}</p>
+                  <div className="book-buttons">
+                    <a href={`https://openlibrary.org${book.id}`} target="_blank" rel="noopener noreferrer">
+                      <button className="view">View Book</button>
+                    </a>
+                    <button
+                      className="delete"
+                      aria-label={`Delete ${book.title}`}
+                      onClick={() => handleDeleteItem(book.id, 'books')}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          // if there's no saved books
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
             <p>No saved books found.</p>
           </div>
