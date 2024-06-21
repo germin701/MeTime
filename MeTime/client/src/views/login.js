@@ -237,7 +237,7 @@ function LoginPage() {
                                 width: '100%',
                                 marginTop: '10px'
                             }}>
-                                <div onClick={() => navigate('/forgot-password')} style={{
+                                <div onClick={() => navigate('/resetpasswordOTP')} style={{
                                     color: '#4A3F39',
                                     fontSize: '14px',
                                     fontFamily: 'Montserrat',

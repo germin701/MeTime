@@ -258,6 +258,123 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000);
 }
 
+const saltRounds = 10;
+
+// route to send OTP to user's email for reset password
+app.post('/api/sendOTP', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // find for user
+    console.log(`Received OTP request for email: ${email}`);
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    //console.log('User found:', user);
+
+    // generate OTP
+    const otp = generateOTP().toString();
+    const otpExpiresAt = Date.now() + 2 * 60 * 1000; // 2 minutes from now
+
+    // hash the OTP to store in database
+    const hashedOtp = await bcrypt.hash(otp, saltRounds);
+    //console.log(`Generated OTP: ${otp}, Hashed OTP: ${hashedOtp}`);
+
+    // save the hashed OTP
+    user.otp = hashedOtp;
+    user.otpExpiresAt = otpExpiresAt;
+    await user.save();
+    console.log('OTP and expiration time saved to user document.');
+
+    // construct email
+    const mailOptions = {
+      from: process.env.EMAIL_USERNAME,
+      to: email,
+      subject: 'Me Time Password Reset OTP',
+      text: `Your OTP for password reset is: ${otp}. This OTP is valid for 2 minutes.`
+    };
+
+    // send email
+    await transporter.sendMail(mailOptions);
+    console.log('OTP sent via email.');
+
+    res.status(200).json({ message: 'OTP sent successfully.' });
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    res.status(500).json({ message: 'Failed to send OTP.' });
+  }
+});
+
+
+// endpoint to verify OTP
+app.post('/api/verifyOTP', async (req, res) => {
+  const { email, submittedOTP } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // get current time 
+    const currentTime = Date.now();
+    //console.log(`Current Time: ${currentTime}, OTP Expires At: ${user.otpExpiresAt}`);
+
+    // check for OTP expiration
+    if (currentTime > user.otpExpiresAt) {
+      return res.status(400).json({ message: 'OTP expired' });
+    }
+
+    // if is not expired, compare the string entered
+    const isOtpValid = await bcrypt.compare(submittedOTP, user.otp);
+    console.log(`OTP Valid: ${isOtpValid}`);
+
+    if (!isOtpValid) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    // clear the OTP and its expiration time in database after successful verification
+    user.otp = null;
+    user.otpExpiresAt = null;
+    await user.save();
+
+    res.status(200).json({ message: 'OTP verified successfully' });
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    res.status(500).json({ message: 'Failed to verify OTP' });
+  }
+});
+
+// route to handle updating password reset
+app.put('/api/resetPassword/:email', async (req, res) => {
+  const { email } = req.params;
+  const { password } = req.body;
+
+  try {
+      // find the user by their username
+      const user = await User.findOne({ email });
+
+      if (!user) {
+          return res.status(404).send('User not found');
+      }
+
+      // update password and hash it
+      user.password = await bcrypt.hash(password, 10);
+
+      // save the updated password
+      await user.save();
+
+      res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+      console.error('Failed to update user password:', error);
+      res.status(500).send('Failed to update user password');
+  }
+});
+
 // send OTP for sign up
 app.post('/api/sendOTPtoRegister', async (req, res) => {
   const { email } = req.body;
