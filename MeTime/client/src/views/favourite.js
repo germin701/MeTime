@@ -4,6 +4,7 @@ import { AuthContext } from '../AuthContext';
 import saveIcon from '../assets/favourite.png';
 import profileIcon from '../assets/profilepic.png';
 import { Link, useNavigate } from 'react-router-dom';
+import './favourite.css';
 
 // User's Favourite Collection Page
 function FavoritesPage() {
@@ -267,7 +268,7 @@ function FavoritesPage() {
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'center', gap: '8px', display: 'flex' }}>
             <img src={profileIcon} alt="Profile" style={{ width: '25px', height: '25px' }} />
-            <Link to="/profile" style={{ color: 'white', fontSize: '20px', textDecoration: 'none' }}>My Profile</Link>
+            <Link to="/profile" style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', textDecoration: 'none' }}>My Profile</Link>
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'flex-start', paddingRight: '20px', gap: '12px', display: 'flex' }}>
             <div style={{ padding: '0 20px' }}>
