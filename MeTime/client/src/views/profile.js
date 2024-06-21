@@ -147,7 +147,7 @@ function ProfilePage() {
                         alignItems: 'center'
                     }}>
                         <strong style={{ minWidth: '150px', textAlign: 'left' }}>Email Address:</strong>
-                        <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} readOnly={!isEditing} style={{ marginLeft: '20px', border: 'none', outline: 'none', fontSize: '16px', width: '200px', backgroundColor: isEditing ? '#f1f1f1' : 'transparent', textAlign: 'right' }} />
+                        <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} readOnly={!isEditing} style={{ marginLeft: '20px', border: 'none', outline: 'none', fontSize: '16px', width: '300px', backgroundColor: isEditing ? '#f1f1f1' : 'transparent', textAlign: 'right' }} />
                     </div>
                     <div style={{
                         fontSize: '18px',
