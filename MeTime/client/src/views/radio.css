@@ -1,138 +1,111 @@
-input, select {
-  padding: 10px;
-  margin: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+input,
+select {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }
 
 .stations-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .station-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 5px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 .station-thumbnail {
-  width: 250px; 
-  height: 250px;
-  margin-top: 3px;
-  border-radius: 20px;
+    width: 100px;
+    height: 100px;
+    margin-top: 10px;
+    border-radius: 50%;
 }
 
 .station-details {
-  flex: 1;
-  text-align: left;
+    flex: 1;
+    text-align: left;
 }
 
 .station-title {
-  font-size: 24px;
-  margin: 0;
+    font-size: 24px;
+    margin: 0;
 }
 
 .station-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-button.save {
-  padding: 10px 15px;
-  border: none;
-  background-color: #46360a;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button.save:hover {
-  background-color: #5f4f13;
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 button.visit {
     padding: 10px 15px;
     border: none;
-    background-color: #14325f;
+    background-color: #46360a;
     color: white;
     border-radius: 5px;
     cursor: pointer;
-  }
-
-button.visit:hover {
-background-color: #496987;
 }
 
-button.listen {
-    padding: 10px 15px;
-    border: none;
-    background-color: #17a2b8;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-button.listen:hover {
-background-color: #496987;
+button.visit:hover {
+    background-color: #5f4f13;
 }
 
 hr {
-  margin: 10px 0;
+    margin: 10px 0;
 }
 
 .bold-title {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 button.search {
-  width: 100px;
-  height: 30px;
-  padding-left: 32px; 
-  padding-right: 32px; 
-  padding-top: 8px; 
-  padding-bottom: 8px; 
-  background: #D0AA8D; 
-  border-radius: 32px; 
-  justify-content: center; 
-  align-items: center; 
-  gap: 8px; 
-  display: inline-flex;
-  color: white;
-  font-size: 16px; 
-  font-family: 'Montserrat';
-  font-weight: 600; 
-  cursor: pointer;
+    width: 100px;
+    height: 30px;
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background: #D0AA8D;
+    border-radius: 32px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: inline-flex;
+    color: white;
+    font-size: 16px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+    cursor: pointer;
 }
 
-button.search:hover{
-  background-color: #543d11;
+button.search:hover {
+    background-color: #543d11;
 }
 
 button.clear {
-  width: 100px;
-  height: 30px;
-  padding: 8px 32px;
-  border-radius: 32px;
-  justify-content: center;
-  align-items: center;
-  display: inline-flex;
-  color: white;
-  font-size: 14px;
-  font-family: 'Montserrat';
-  font-weight: 600;
-  cursor: pointer;
-  background: #FFF4F1;
-  color: #D0AA8D;
+    width: 100px;
+    height: 30px;
+    padding: 8px 32px;
+    border-radius: 32px;
+    justify-content: center;
+    align-items: center;
+    display: inline-flex;
+    color: white;
+    font-size: 14px;
+    font-family: 'Montserrat';
+    font-weight: 600;
+    cursor: pointer;
+    background: #D0AA8D;
 }
 
-button.clear:hover{
-  background-color: #543d11;
-  border: 2px solid #543d11;
-  color: white;
+button.clear:hover {
+    background-color: #543d11;
+    color: white;
 }
