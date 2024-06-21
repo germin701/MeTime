@@ -14,51 +14,58 @@ function SignUpPage() {
 
     const handleSendOTP = async () => {
         if (email === '' || username === '' || password === '' || confirmPassword === '') {
-          alert('Please enter all fields');
-          return;
+            alert('Please enter all fields');
+            return;
         }
-      
+    
         if (password !== confirmPassword) {
-          alert('Passwords do not match');
-          return;
+            alert('Passwords do not match');
+            return;
         }
-      
+    
         try {
-          const response = await axios.post('http://localhost:5000/api/sendOTPtoRegister', { email });
-          setStep(2); // Move to the OTP verification step
-          alert("Email is sent. Please check your inbox to enter the OTP.");
+            // Check if email or username already exists
+            const checkResponse = await axios.post('http://localhost:5000/api/checkUserExistence', { email, username });
+    
+            if (checkResponse.status === 200) {
+                // If email and username are available, send OTP
+                const response = await axios.post('http://localhost:5000/api/sendOTPtoRegister', { email });
+                setStep(2); // Move to the OTP verification step
+                alert("Email is sent. Please check your inbox to enter the OTP.");
+            }
         } catch (error) {
-          console.error('Failed to send OTP:', error.message);
-          if (error.response && error.response.data) {
-            alert(error.response.data.message); // Show specific error message
-          } else {
-            alert('Failed to send OTP');
-          }
+            console.error('Failed to send OTP:', error.message);
+            if (error.response && error.response.data && error.response.data.message) {
+                alert(error.response.data.message); // Show specific error message
+            } else {
+                alert('Failed to send OTP');
+            }
         }
-      };
-      
-      const handleVerifyOTP = async (submittedOTP) => {
+    };
+    
+
+    const handleVerifyOTP = async (submittedOTP) => {
         console.log('Submitted OTP:', submittedOTP); // log submitted OTP
         try {
-          const response = await axios.post('http://localhost:5000/api/verifyOTPtoRegister', { email, otp: submittedOTP });
-          console.log(response.data.message);
-      
-          if (response.status === 200) {
-            alert('OTP matched. Proceeding to sign up.');
-            handleSignUp();
-          } else {
-            alert(response.data.message); // Show specific error message
-          }
+            const response = await axios.post('http://localhost:5000/api/verifyOTPtoRegister', { email, otp: submittedOTP });
+            console.log(response.data.message);
+
+            if (response.status === 200) {
+                alert('OTP matched. Proceeding to sign up.');
+                handleSignUp();
+            } else {
+                alert(response.data.message); // Show specific error message
+            }
         } catch (error) {
-          console.error('Error handling OTP submission:', error);
-          if (error.response && error.response.data) {
-            alert(error.response.data.message); // Show specific error message
-          } else {
-            alert('Failed to verify OTP. Please try again.');
-          }
+            console.error('Error handling OTP submission:', error);
+            if (error.response && error.response.data) {
+                alert(error.response.data.message); // Show specific error message
+            } else {
+                alert('Failed to verify OTP. Please try again.');
+            }
         }
-      };
-      
+    };
+
 
     const handleSignUp = async () => {
         try {
