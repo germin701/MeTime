@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import backgroundImg from '../assets/signup.jpg';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function SignUpPage() {
     const [email, setEmail] = useState('');
@@ -331,25 +331,40 @@ function SignUpPage() {
                                 </div>
                             </div>
                             <div style={{
-                                height: '48px',
-                                padding: '16px 32px',
-                                background: '#705243',
-                                borderRadius: '8px',
+                                width: '100%',
+                                display: 'flex',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                gap: '10px',
-                                display: 'inline-flex',
-                                cursor: 'pointer'
-                            }} onClick={handleSendOTP}>
+                            }}>
                                 <div style={{
-                                    color: 'white',
-                                    fontSize: '18px',
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: '600',
-                                    wordWrap: 'break-word'
-                                }}>
-                                    Sign Up
+                                    height: '48px',
+                                    width: '80%',
+                                    padding: '16px 32px',
+                                    background: '#705243',
+                                    borderRadius: '8px',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    display: 'flex',
+                                    cursor: 'pointer'
+                                }} onClick={handleSendOTP}>
+                                    <div style={{
+                                        color: 'white',
+                                        fontSize: '18px',
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: '600',
+                                        wordWrap: 'break-word',
+                                        textAlign: 'center',
+                                        width: '100%'
+                                    }}>
+                                        Sign Up
+                                    </div>
                                 </div>
+                            </div>
+                            <div style={{ marginTop: '20px', textAlign: 'center', width: '100%' }}>
+                                <Link to="/login" style={{ color: '#4A3F39', fontSize: '16px', fontFamily: 'Montserrat', fontWeight: '600', textDecoration: 'none' }}>
+                                    Already have an account? LOGIN
+                                </Link>
                             </div>
                         </div>
                     ) : (

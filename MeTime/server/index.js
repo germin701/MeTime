@@ -579,7 +579,7 @@ app.post('/api/sendOTPtoRegister', async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USERNAME,
       to: email,
-      subject: 'Your Registration OTP',
+      subject: 'Me Time: Your Registration OTP',
       text: `Your OTP for registration is: ${otp}. This OTP is valid for 2 minutes.`
     };
 
