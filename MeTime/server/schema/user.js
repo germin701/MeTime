@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Create User schema
+// create user schema
 const UserSchema = new Schema({
     _id: {
         type: String,
@@ -34,7 +34,7 @@ const UserSchema = new Schema({
     collection: 'user_info'
 });
 
-// Create User model
+// create user model
 const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

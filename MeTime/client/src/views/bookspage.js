@@ -6,6 +6,7 @@ import profileIcon from '../assets/profilepic.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 
+//Books Page
 function BooksPage() {
   const { authState, setAuthState } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ function BooksPage() {
   };
 
   useEffect(() => {
+    // fetch books from api
     const fetchBooks = async () => {
       try {
         const response = await axios.get('http://openlibrary.org/search.json?title=all');
@@ -37,7 +39,8 @@ function BooksPage() {
 
           return {
             id: key,
-            first_sentence: first_sentence || 'Unknown', // Ensure first_sentence has a default value if undefined or null
+            // ensure first_sentence is shown as 'Unknown' if the field is null value
+            first_sentence: first_sentence || 'Unknown',
             author: author_name,
             cover_id: cover_i,
             edition_count: edition_count,
@@ -53,11 +56,11 @@ function BooksPage() {
         setBooks(newBooks);
         setFilteredBooks(newBooks);
 
-        // Generate unique language and publish year options
+        // generate unique language and publish year options
         const languages = [...new Set(newBooks.flatMap(book => book.language))];
         const firstPublishYears = [...new Set(newBooks.map(book => book.first_publish_year))]
-          .filter(year => !isNaN(year)) // Remove NaN values
-          .sort((a, b) => b - a); // Sort years in descending order
+          .filter(year => !isNaN(year)) // remove NaN values
+          .sort((a, b) => b - a); // sort years in descending order
 
         setOptions(prevOptions => ({ ...prevOptions, languages, firstPublishYears }));
 
@@ -66,6 +69,7 @@ function BooksPage() {
       }
     };
 
+    // get the books saved by user
     const fetchSavedBooks = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/saveBook?username=${username}`);
@@ -86,6 +90,7 @@ function BooksPage() {
     setFilters({ ...filters, [name]: value });
   };
 
+  // filter function
   const filterBooks = () => {
     let filtered = books;
     if (filters.keyword) {
@@ -106,10 +111,12 @@ function BooksPage() {
     setCurrentPage(1);
   };
 
+  // search function
   const handleSearch = () => {
     filterBooks();
   };
 
+  // clear filter function
   const clearFilters = () => {
     setFilters({ keyword: '', ratings_average: '', language: '', first_publish_year: '' });
     setFilteredBooks(books);
@@ -117,19 +124,21 @@ function BooksPage() {
     setCurrentPage(1);
   };
 
+  // pagination function
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
+  // function to save books as favourites
   const saveToFavourites = async (book) => {
     try {
-      // Make POST request to save the book
+      // make POST request to save the book
       await axios.post('http://localhost:5000/api/saveBook', {
         username: username,
         book: {
           id: book.id,
           title: book.title,
-          first_sentence: book.first_sentence, // Ensure first_sentence is converted to string if exists
+          first_sentence: book.first_sentence,
           author: book.author,
           cover_id: book.cover_id,
           edition_count: book.edition_count,
@@ -141,23 +150,22 @@ function BooksPage() {
         }
       });
   
-      // Update savedBooks state and local storage
+      // update savedBooks state and local storage
       const updatedSavedBooks = [...savedBooks, book.id];
       setSavedBooks(updatedSavedBooks);
       localStorage.setItem('savedBooks', JSON.stringify(updatedSavedBooks));
   
-      // Notify user
+      // notify user
       alert("Book saved successfully");
   
     } catch (error) {
-      // Handle error
+      // handle error
       console.error('Failed to save book:', error);
-      // Optionally notify user about the error
+      // optionally notify user about the error
       alert("Failed to save book. Please try again later.", error);
     }
   };
   
-
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
   const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);

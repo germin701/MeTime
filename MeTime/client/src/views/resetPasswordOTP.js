@@ -25,7 +25,8 @@ const PasswordReset = () => {
     } catch (error) {
       console.error('Error sending OTP:', error);
       if (error.response && error.response.data && error.response.data.message) {
-        alert(error.response.data.message); // show specific error message from server
+        // show specific error message from server
+        alert(error.response.data.message);
       } else {
         alert('Failed to send OTP. Please try again.');
       }
@@ -33,33 +34,35 @@ const PasswordReset = () => {
     }
   };
 
-
   // verify the submitted OTP matched with the generated OTP
   const handleOTPSubmit = async (submittedOTP) => {
-    console.log('Submitted OTP:', submittedOTP); // log submitted OTP
+    // log submitted OTP
+    console.log('Submitted OTP:', submittedOTP);
     try {
       const response = await axios.post('http://localhost:5000/api/verifyOTP', { email, submittedOTP });
       console.log(response.data.message);
 
       if (response.status === 200) {
         alert('OTP matched. Proceeding to reset your password.');
-        setOtpVerified(true); // set OTP verification to true after successful verification
+        // set OTP verification to true after successful verification
+        setOtpVerified(true);
       } else {
         alert('Failed to verify OTP. Please try again.');
-        setOtpVerified(false); // set OTP verification to false on failure
+        // set OTP verification to false on failure
+        setOtpVerified(false);
       }
     } catch (error) {
       console.error('Error handling OTP submission:', error);
       if (error.response && error.response.data && error.response.data.message) {
-        alert(error.response.data.message); // Show specific error message from server
+         // show specific error message from server
+        alert(error.response.data.message);
       } else {
         alert('Failed to verify OTP. Please try again.');
       }
-      setOtpVerified(false); // set OTP verification to false on failure
+      // set OTP verification to false on failure
+      setOtpVerified(false);
     }
   };
-
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -69,12 +72,12 @@ const PasswordReset = () => {
     }
 
     try {
-      // directly reset password here
+      // reset password here
       const resetResponse = await axios.put(`http://localhost:5000/api/resetPassword/${email}`, { password: newPassword });
       console.log(resetResponse.data);
 
       alert('Password reset successful.');
-      // clear form fields or reset state
+      // clear form fields
       setOtp('');
       setNewPassword('');
       setConfirmPassword('');
@@ -243,7 +246,6 @@ const PasswordReset = () => {
                     fontWeight: '600',
                     wordWrap: 'break-word',
                     border: 'none',
-                    // background: 'none',
                     cursor: 'pointer',
                     outline: 'none'
                   }}>
