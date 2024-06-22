@@ -22,6 +22,7 @@ function RadioPage() {
   const [pageRange, setPageRange] = useState([1, 20]);
   const [loading, setLoading] = useState(false);
   const [savedRadios, setSavedRadios] = useState([]);
+  const [stateDisabled, setStateDisabled] = useState(true);
   const stationsPerPage = 10;
   const pagesPerRange = 20;
 
@@ -159,16 +160,14 @@ function RadioPage() {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [countriesRes, statesRes, languagesRes] = await Promise.all([
+        const [countriesRes, languagesRes] = await Promise.all([
           axios.get('https://de1.api.radio-browser.info/json/countries'),
-          axios.get('https://de1.api.radio-browser.info/json/states'),
           axios.get('https://de1.api.radio-browser.info/json/languages')
         ]);
-
         setOptions({
-          countries: countriesRes.data,
-          states: statesRes.data,
-          languages: languagesRes.data
+          countries: countriesRes.data.map(country => country.name),
+          states: [],
+          languages: languagesRes.data.map(language => language.name)
         });
       } catch (error) {
         console.error("Error fetching options:", error);
@@ -216,9 +215,26 @@ function RadioPage() {
     // }, [currentPage]);
   }, []);
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = async (e) => {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
+
+    if (name === 'country') {
+      setStateDisabled(true);
+      setFilters(prevFilters => ({ ...prevFilters, state: '' }));
+
+      if (value) {
+        try {
+          const response = await axios.get(`http://de1.api.radio-browser.info/json/states/${value}/`);
+          setOptions(prevOptions => ({ ...prevOptions, states: response.data.map(state => state.name) }));
+          setStateDisabled(false);
+        } catch (error) {
+          console.error("Error fetching states:", error);
+        }
+      } else {
+        setOptions(prevOptions => ({ ...prevOptions, states: [] }));
+      }
+    }
   };
 
   const filterStations = () => {
@@ -253,6 +269,8 @@ function RadioPage() {
     setCurrentPage(1);
     setPageRange([1, 20]);
     setTotalPages(Math.ceil(stations.length / stationsPerPage));
+    setStateDisabled(true);
+    setOptions(prevOptions => ({ ...prevOptions, states: [] }));
   };
 
   const handlePageClick = (pageNumber) => {
@@ -341,16 +359,16 @@ function RadioPage() {
             <select name="country" value={filters.country} onChange={handleFilterChange} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
               <option value="">All Countries</option>
               {options.countries.map((country, index) => (
-                <option key={index} value={country.name}>{country.name}</option>
+                <option key={index} value={country}>{country}</option>
               ))}
               {/* {options.countries.map(country => (
                 <option key={country.name} value={country.name}>{country.name}</option>
               ))} */}
             </select>
-            <select name="state" value={filters.state} onChange={handleFilterChange} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
+            <select name="state" value={filters.state} onChange={handleFilterChange} disabled={stateDisabled} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
               <option value="">All States</option>
               {options.states.map((state, index) => (
-                <option key={index} value={state.name}>{state.name}</option>
+                <option key={index} value={state}>{state}</option>
               ))}
               {/* {options.states.map(state => (
                 <option key={state.name} value={state.name}>{state.name}</option>
@@ -359,7 +377,7 @@ function RadioPage() {
             <select name="language" value={filters.language} onChange={handleFilterChange} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
               <option value="">All Languages</option>
               {options.languages.map((language, index) => (
-                <option key={index} value={language.name}>{language.name}</option>
+                <option key={index} value={language}>{language}</option>
               ))}
               {/* {options.languages.map(language => (
                 <option key={language.name} value={language.name}>{language.name}</option>
