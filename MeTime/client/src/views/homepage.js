@@ -28,13 +28,13 @@ function HomePage() {
       <div className="NavBar" style={{ width: '100%', height: '68px', paddingLeft: '0px', paddingRight: '0px', paddingTop: '10px', paddingBottom: '10px', background: '#705243', justifyContent: 'space-between', alignItems: 'center', display: 'flex' }}>
         <div style={{ color: '#FEFEFE', fontSize: '32px', paddingLeft: '20px', fontFamily: 'Montserrat', fontWeight: '800', lineHeight: '48px', wordWrap: 'break-word' }}>MeTime</div>
         <div style={{ justifyContent: 'flex-start', alignItems: 'flex-start', gap: '32px', display: 'flex' }}>
-        <Link to="/homepage" style={{ color: 'lightgray', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', textDecoration: 'none' }}>Home</Link>
+          <Link to="/homepage" style={{ color: 'lightgray', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', textDecoration: 'none' }}>Home</Link>
           <Link to="/latest" style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', textDecoration: 'none' }}>Latest</Link>
           <Link to="/radiopage" style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', textDecoration: 'none' }}>Radio</Link>
           <Link to="/newspage" style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', textDecoration: 'none' }}>News</Link>
           <Link to="/bookspage" style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', textDecoration: 'none' }}>Books</Link>
           <Link to="/gamespage" style={{ color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', textDecoration: 'none' }}>Games</Link>
-          </div>
+        </div>
         <div style={{ justifyContent: 'flex-start', alignItems: 'center', gap: '20px', display: 'flex' }}>
           <div style={{ justifyContent: 'flex-start', alignItems: 'center', gap: '8px', display: 'flex' }}>
             <img src={saveIcon} alt="Favourites" style={{ width: '25px', height: '25px' }} />
@@ -54,12 +54,12 @@ function HomePage() {
             </div>
           </div>
           <div style={{ justifyContent: 'flex-start', alignItems: 'flex-start', paddingRight: '20px', gap: '12px', display: 'flex' }}>
-          <div style={{ padding: '0 20px' }}>
-            <button onClick={logout} style={{ width: '120px', height: '40px', background: '#EA6767', borderRadius: '8px', color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', border: 'none', cursor: 'pointer' }}>
-              Log Out
-            </button>
+            <div style={{ padding: '0 20px' }}>
+              <button onClick={logout} style={{ width: '120px', height: '40px', background: '#EA6767', borderRadius: '8px', color: 'white', fontSize: '20px', fontFamily: 'Montserrat', fontWeight: '500', border: 'none', cursor: 'pointer' }}>
+                Log Out
+              </button>
 
-          </div>
+            </div>
           </div>
         </div>
       </div>
@@ -80,7 +80,7 @@ function HomePage() {
               </div>
               <div className="Frame19" style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 8, display: 'flex' }}>
                 <Link to='/bookspage'>
-                <img className="WorkerReadingNewsWithTablet1" style={{ width: '100%', borderRadius: 32 }} src={book} alt="Books" /></Link>
+                  <img className="WorkerReadingNewsWithTablet1" style={{ width: '100%', borderRadius: 32 }} src={book} alt="Books" /></Link>
                 <div className="Frame18" style={{ width: '100%', padding: '0 8px', justifyContent: 'center', alignItems: 'center', gap: 8, display: 'flex' }}>
                   <div className="Books" style={{ color: '#7D6558', fontSize: 32, fontFamily: 'Montserrat', fontWeight: '600', lineHeight: '48px', wordWrap: 'break-word' }}>Books</div>
                 </div>
@@ -99,7 +99,7 @@ function HomePage() {
                 </Link>
                 <div className="Frame18" style={{ width: '100%', padding: '0 8px', justifyContent: 'center', alignItems: 'center', gap: 8, display: 'flex' }}>
                   <div
-                    className="Music"
+                    className="Radio"
                     style={{
                       color: '#7D6558',
                       fontSize: 32,
@@ -109,7 +109,7 @@ function HomePage() {
                       wordWrap: 'break-word',
                     }}
                   >
-                    Music
+                    Radio
                   </div>
                 </div>
               </div>
