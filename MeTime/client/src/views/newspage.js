@@ -10,13 +10,206 @@ import { AuthContext } from '../AuthContext';
 //         "cv","ky","cf","td","cl","cn","co","km","cg","ck","cr","hr","cu","cw","cy","cz","dk","dj","dm","do","","","","","","","","","","","",
 //         "","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",
 
-//country codes
+// country codes
 const countryCodes = {
+  "Afghanistan": "af",  "Albania": "al",  "Algeria": "dz",  "Andorra": "ad",  "Angola": "ao",  "Argentina": "ar",  "Armenia": "am",  "Australia": "au",  "Austria": "at",  "Azerbaijan": "az",  "Bahamas": "bs",
+  "Bahrain": "bh",
+  "Bangladesh": "bd",
+  "Barbados": "bb",
+  "Belarus": "by",
+  "Belgium": "be",
+  "Belize": "bz",
+  "Benin": "bj",
+  "Bermuda": "bm",
+  "Bhutan": "bt",
+  "Bolivia": "bo",
+  "Bosnia And Herzegovina": "ba",
+  "Botswana": "bw",
+  "Brazil": "br",
+  "Brunei": "bn",
+  "Bulgaria": "bg",
+  "Burkina Faso": "bf",
+  "Burundi": "bi",
+  "Cambodia": "kh",
+  "Cameroon": "cm",
+  "Canada": "ca",
+  "Cape Verde": "cv",
+  "Cayman Islands": "ky",
+  "Central African Republic": "cf",
+  "Chad": "td",
+  "Chile": "cl",
   "China": "cn",
-  "Australia": "au",
-  "Malaysia": "my"
-  // Add more countries and their codes here
+  "Colombia": "co",
+  "Comoros": "km",
+  "Congo": "cg",
+  "Cook Islands": "ck",
+  "Costa Rica": "cr",
+  "Croatia": "hr",
+  "Cuba": "cu",
+  "Curaçao": "cw",
+  "Cyprus": "cy",
+  "Czech Republic": "cz",
+  "Denmark": "dk",
+  "Djibouti": "dj",
+  "Dominica": "dm",
+  "Dominican Republic": "do",
+  "DR Congo": "cd",
+  "Ecuador": "ec",
+  "Egypt": "eg",
+  "El Salvador": "sv",
+  "Equatorial Guinea": "gq",
+  "Eritrea": "er",
+  "Estonia": "ee",
+  "Eswatini": "sz",
+  "Ethiopia": "et",
+  "Fiji": "fj",
+  "Finland": "fi",
+  "France": "fr",
+  "French Polynesia": "pf",
+  "Gabon": "ga",
+  "Gambia": "gm",
+  "Georgia": "ge",
+  "Germany": "de",
+  "Ghana": "gh",
+  "Gibraltar": "gi",
+  "Greece": "gr",
+  "Grenada": "gd",
+  "Guatemala": "gt",
+  "Guinea": "gn",
+  "Guyana": "gy",
+  "Haiti": "ht",
+  "Honduras": "hn",
+  "Hong Kong": "hk",
+  "Hungary": "hu",
+  "Iceland": "is",
+  "India": "in",
+  "Indonesia": "id",
+  "Iran": "ir",
+  "Iraq": "iq",
+  "Ireland": "ie",
+  "Israel": "il",
+  "Italy": "it",
+  "Ivory Coast": "ci",
+  "Jamaica": "jm",
+  "Japan": "jp",
+  "Jersey": "je",
+  "Jordan": "jo",
+  "Kazakhstan": "kz",
+  "Kenya": "ke",
+  "Kiribati": "ki",
+  "Kosovo": "xk",
+  "Kuwait": "kw",
+  "Kyrgyzstan": "kg",
+  "Laos": "la",
+  "Latvia": "lv",
+  "Lebanon": "lb",
+  "Lesotho": "ls",
+  "Liberia": "lr",
+  "Libya": "ly",
+  "Liechtenstein": "li",
+  "Lithuania": "lt",
+  "Luxembourg": "lu",
+  "Macau": "mo",
+  "Macedonia": "mk",
+  "Madagascar": "mg",
+  "Malawi": "mw",
+  "Malaysia": "my",
+  "Maldives": "mv",
+  "Mali": "ml",
+  "Malta": "mt",
+  "Marshall Islands": "mh",
+  "Mauritania": "mr",
+  "Mauritius": "mu",
+  "Mexico": "mx",
+  "Micronesia": "fm",
+  "Moldova": "md",
+  "Monaco": "mc",
+  "Mongolia": "mn",
+  "Montenegro": "me",
+  "Morocco": "ma",
+  "Mozambique": "mz",
+  "Myanmar": "mm",
+  "Namibia": "na",
+  "Nauru": "nr",
+  "Nepal": "np",
+  "Netherland": "nl",
+  "New Caledonia": "nc",
+  "New Zealand": "nz",
+  "Nicaragua": "ni",
+  "Niger": "ne",
+  "Nigeria": "ng",
+  "North Korea": "kp",
+  "Norway": "no",
+  "Oman": "om",
+  "Pakistan": "pk",
+  "Palau": "pw",
+  "Palestine": "ps",
+  "Panama": "pa",
+  "Papua New Guinea": "pg",
+  "Paraguay": "py",
+  "Peru": "pe",
+  "Philippines": "ph",
+  "Poland": "pl",
+  "Portugal": "pt",
+  "Puerto Rico": "pr",
+  "Qatar": "qa",
+  "Romania": "ro",
+  "Russia": "ru",
+  "Rwanda": "rw",
+  "Saint Lucia": "lc",
+  "Saint Martin (Dutch)": "sx",
+  "Samoa": "ws",
+  "San Marino": "sm",
+  "Sao Tome and Principe": "st",
+  "Saudi Arabia": "sa",
+  "Senegal": "sn",
+  "Serbia": "rs",
+  "Seychelles": "sc",
+  "Sierra Leone": "sl",
+  "Singapore": "sg",
+  "Slovakia": "sk",
+  "Slovenia": "si",
+  "Solomon Islands": "sb",
+  "Somalia": "so",
+  "South Africa": "za",
+  "South Korea": "kr",
+  "Spain": "es",
+  "Sri Lanka": "lk",
+  "Sudan": "sd",
+  "Suriname": "sr",
+  "Sweden": "se",
+  "Switzerland": "ch",
+  "Syria": "sy",
+  "Taiwan": "tw",
+  "Tajikistan": "tj",
+  "Tanzania": "tz",
+  "Thailand": "th",
+  "Timor-Leste": "tl",
+  "Togo": "tg",
+  "Tonga": "to",
+  "Trinidad and Tobago": "tt",
+  "Tunisia": "tn",
+  "Turkey": "tr",
+  "Turkmenistan": "tm",
+  "Tuvalu": "tv",
+  "Uganda": "ug",
+  "Ukraine": "ua",
+  "United Arab Emirates": "ae",
+  "United Kingdom": "gb",
+  "United States of America": "us",
+  "Uruguay": "uy",
+  "Uzbekistan": "uz",
+  "Vanuatu": "vu",
+  "Vatican": "va",
+  "Venezuela": "ve",
+  "Vietnam": "vi",
+  "Virgin Islands (British)": "vg",
+  "World": "wo",
+  "Yemen": "ye",
+  "Zambia": "zm",
+  "Zimbabwe": "zw"
 };
+
 
 
 //language codes
@@ -31,9 +224,10 @@ function NewsPage() {
   const [loading, setLoading] = useState(false);
   const { authState, setAuthState } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [news, setNews] = useState([]);
+  //const [news, setNews] = useState([]);
   const [filteredNews, setFilteredNews] = useState([]);
-  const [filters, setFilters] = useState({ keyword: '', country: '', category: '', language: '' });
+  const [searchFilters, setSearchFilters] = useState({ keyword: '', country: '', category: '', language: '' });
+  const [appliedFilters, setAppliedFilters] = useState({ keyword: '', country: '', category: '', language: '' });
   const [options, setOptions] = useState(
     { 
       countries: [
@@ -68,69 +262,52 @@ function NewsPage() {
   };
 
 
-  //fetch news data when filters change
-  // useEffect(() => {
-  //   // Fetch news data when filters change
-  //   const fetchNews = async () => {
-  //     const country = countryCodes[filters.country] || '';
-  //     const language = languageCodes[filters.language] || '';
-  //     const url = `https://newsdata.io/api/1/latest?apikey=pub_4479804182d66f5ac1c05709179ff0bf7f54e&country=${country}&category=${filters.category}&language=${language}&keyword=${filters.keyword}`;
-  //     const response = await fetch(url);
-  //     const data = await response.json();
-  //     setNews(data.results);
-  //   };
 
-  //   fetchNews();
-  // }, [filters]);
+  // Fetch news from API
+  const fetchNews = async (filters) => {
+    setLoading(true);
+    try {
+      const country = countryCodes[filters.country] || '';
+      const language = languageCodes[filters.language] || '';
+      const queryParams = new URLSearchParams();
+      if (filters.keyword) queryParams.append('qInTitle', filters.keyword);
+      if (filters.country) queryParams.append('country', country);
+      if (filters.category) queryParams.append('category', filters.category);
+      if (filters.language) queryParams.append('language', language);
+      const url = `https://newsdata.io/api/1/latest?apikey=pub_4479804182d66f5ac1c05709179ff0bf7f54e&${queryParams.toString()}`;
+      
+      const response = await axios.get(url);
+      const formattedNews = response.data.results.map(article => ({
+        article_id: article.article_id,
+        title: article.title,
+        link: article.link,
+        creator: Array.isArray(article.creator) ? article.creator.join(', ') : (article.creator || ''),
+        description: article.description,
+        pubDate: article.pubDate,
+        imageUrl: article.image_url,
+        sourceId: article.source_id,
+        language: article.language,
+        country: Array.isArray(article.country) ? article.country.join(', ') : (article.country || ''),
+        category: Array.isArray(article.category) ? article.category.join(', ') : (article.category || ''),
+      }));
 
+      setNews(formattedNews); // Set original news data
+      setFilteredNews(formattedNews); // Initialize filtered news with original data
+      setNoResults(formattedNews.length === 0); // Set no results flag
+      setCurrentPage(1); // Reset current page
+    } catch (error) {
+      console.error("Error fetching news:", error);
+      // Handle error fetching data
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  // Fetch news and saved news on component mount
   useEffect(() => {
-    // Fetch news from API
-    const fetchNews = async () => {
-      setLoading(true);
-      try {
-        const country = countryCodes[filters.country] || '';
-        const language = languageCodes[filters.language] || '';
-        const queryParams = new URLSearchParams();
-        if (filters.title) queryParams.append('qInTitle', filters.title);
-        if (filters.country) queryParams.append('country', countryCodes[filters.country]);
-        if (filters.category) queryParams.append('category', filters.category);
-        if (filters.language) queryParams.append('language', languageCodes[filters.language]);
-        const url = `https://newsdata.io/api/1/latest?apikey=pub_43388a64d771db816152ebab81977eb147833&${queryParams.toString()}`;
-   
-        const response = await axios.get(url);
-        //const { data } = response.data; // Assuming your data structure matches your provided JSON snippet
-        console.log(response.data);
-        //Map fetched data to match your display format
-        const formattedNews = response.data.results.map(article => ({
-          article_id: article.article_id,
-          title: article.title,
-          link: article.link,
-          creator: Array.isArray(article.creator) ? article.creator.join(', ') : (article.creator || ''),
-          description: article.description,
-          pubDate: article.pubDate,
-          imageUrl: article.image_url,
-          sourceId: article.source_id,
-          language: article.language,
-          country: Array.isArray(article.country) ? article.country.join(', ') : (article.country || ''),
-          category: Array.isArray(article.category) ? article.category.join(', ') : (article.category || ''),
-        }));
-  
-        setNews(formattedNews); // Set original news data
-        setFilteredNews(formattedNews); // Initialize filtered news with original data
-        setNoResults(false); // Reset no results flag
-        setCurrentPage(1); // Reset current page
-  
-      } catch (error) {
+    fetchNews(appliedFilters);
 
-        console.error("Error fetching news:", error);
-        // Handle error fetching data
-      } finally{
-        setLoading(false);
-      }
-
-    };
-
-    // get the news saved by user
     const fetchSavedNews = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/saveNews?username=${username}`);
@@ -141,85 +318,44 @@ function NewsPage() {
         console.error("Error fetching saved news:", error);
       }
     };
-  
-    fetchNews();
+
     fetchSavedNews();
-  }, [filters]); // Fetch whenever filters change
-  
+  }, []);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters(prevFilters => ({ ...prevFilters, [name]: value }));
+    setSearchFilters(prevFilters => ({ ...prevFilters, [name]: value }));
   };
 
-  // filter function
-  const filterNews = () => {
-    let filtered = news; // Assuming `news` is your original list of news articles
-
-    // Filter by keyword
-    if (filters.keyword) {
-      filtered = filtered.filter(article => article.title.toLowerCase().includes(filters.keyword.toLowerCase()));
-    }
-
-    // Filter by category
-    if (filters.category) {
-      filtered = filtered.filter(article => article.category.toLowerCase() === filters.category.toLowerCase());
-    }
-
-    // Filter by country
-    if (filters.country) {
-      const country = countryCodes[filters.country];
-      filtered = filtered.filter(article => article.country.toLowerCase() === country.toLowerCase());
-    }
-
-    // Filter by language
-    if (filters.language) {
-      const language = languageCodes[filters.language];
-      filtered = filtered.filter(article => article.language.toLowerCase() === language.toLowerCase());
-    }
-
-    // Update filtered news state
-    setFilteredNews(filtered);
-    
-    // Check if no results were found
-    setNoResults(filtered.length === 0);
-    
-    // Reset current page to 1
-    setCurrentPage(1);
-  };
-
-
-  // search function
+  // Apply filters and fetch news on search
   const handleSearch = () => {
-    filterNews();
+    setAppliedFilters(searchFilters);
+    fetchNews(searchFilters);
   };
+
+ 
+
+  
+
+
+
+
+
 
 
   // Clear filters function
   const clearFilters = () => {
-    setFilters({ keyword: '', country: '', category: '', language: '' }); // Reset filter state to initial values
-
-    // Reset filtered news state
-    setFilteredNews([]);
-
-    // Reset no results flag
-    setNoResults(false);
-
-    // Reset current page to 1
-    setCurrentPage(1);
+    const defaultFilters = { keyword: '', country: '', category: '', language: '' };
+    setSearchFilters(defaultFilters);
+    setAppliedFilters(defaultFilters);
+    fetchNews(defaultFilters);
   };
 
-  // pagination function
-  const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+
 
   // function to save news as favourites
-  //code
-
   const saveToFavourites = async (article) => {
     try {
-
       // Log the article object to ensure article_id is present
       console.log('Saving article:', article);
       // make POST request to save the book
@@ -256,11 +392,6 @@ function NewsPage() {
     }
   };
 
-  const indexOfLastNews = currentPage * newsPerPage;
-  const indexOfFirstNews = indexOfLastNews - newsPerPage;
-  const currentNews = filteredNews.slice(indexOfFirstNews, indexOfLastNews);
-
-  const totalPages = Math.ceil(filteredNews.length / newsPerPage);
 
 
   return (
@@ -310,25 +441,25 @@ function NewsPage() {
               type="text"
               name="keyword"
               placeholder="News Keyword"
-              value={filters.keyword}
+              value={searchFilters.keyword}
               onChange={handleFilterChange}
               style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}
             />
-            <select name="category" value={filters.category} onChange={handleFilterChange} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
+            <select name="category" value={searchFilters.category} onChange={handleFilterChange} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
               <option value="">All Categories</option>
               {options && options.categories && options.categories.map(category => (
                 <option key={category} value={category}>{category}</option>
               ))}
             </select>
 
-            <select name="country" value={filters.country} onChange={handleFilterChange} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
+            <select name="country" value={searchFilters.country} onChange={handleFilterChange} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
               <option value="">All Countries</option>
               {options && options.countries && options.countries.map(country => (
                 <option key={country} value={country}>{country}</option>
               ))}
             </select>
 
-            <select name="language" value={filters.language} onChange={handleFilterChange} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
+            <select name="language" value={searchFilters.language} onChange={handleFilterChange} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}>
               <option value="">All Languages</option>
               {options && options.languages && options.languages.map(language => (
                 <option key={language} value={language}>{language}</option>
