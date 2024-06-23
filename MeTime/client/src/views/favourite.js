@@ -292,12 +292,11 @@ function FavoritesPage() {
       case 'news':
         return savedNews.length > 0 ? (
           <div className="news-list">
-            <p>ifiwubfew</p>
-            {savedRadios.map(article => (
+            {savedNews.map(article => (
               <div key={article.article_id} className="news-item">
                 <img src={article.imageUrl} alt={article.title} className="news-thumbnail-container" />
                 <div className="news-details">
-                  <h2 className="news-title">{article.title.trim() || '(No Title Provided)'}</h2>
+                  <h2 className="news-title">{article.title}</h2>
                   <hr />
                   <p><span className="bold-title">Description: </span>{article.description || 'N/A'}</p>
                   <p><span className="bold-title">Creator: </span>{article.creator || 'N/A'}</p>
