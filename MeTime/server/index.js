@@ -4,6 +4,7 @@ const User = require('./schema/user.js');
 const SavedGame = require('./schema/game.js');
 const SavedBook = require('./schema/book.js');
 const SavedRadio = require('./schema/radio.js');
+const SavedNews = require('./schema/news.js');
 const connectDB = require("./dbconn.js");
 const cors = require('cors');
 const crypto = require('crypto');
@@ -387,6 +388,98 @@ app.delete('/api/saveRadio', async (req, res) => {
     res.status(500).send('Failed to delete radio');
   }
 });
+
+
+// duwduduwgdugduuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+// route to handle saving of a news to the user's favorites
+app.post('/api/saveNews', async (req, res) => {
+  try {
+    const { username, article } = req.body;
+
+    // Log the incoming request body
+    console.log('Incoming save news request:', req.body);
+
+    if (!username || !article || !article.article_id) {
+      return res.status(400).send('Invalid request body');
+    }
+
+    // check if the radio is already saved by the user
+    const existingSavedNews = await SavedNews.findOne({ username, article_id: article.article_id });
+    if (existingSavedNews) {
+      return res.status(400).send('News already saved to favorites');
+    }
+
+    // create a new saved radio
+    const newSavedNews = new SavedNews({
+      username,
+      article_id: article.article_id,
+      title: article.title,
+      link: article.link,
+      creator: article.creator, 
+      description: article.description,
+      pubDate: article.pubDate,
+      imageUrl: article.image_url,
+      sourceId: article.source_id,
+      language: article.language,
+      country: article.country, 
+      category: article.category, 
+        
+    });
+
+    // save the news to the database
+    await newSavedNews.save();
+
+    res.status(201).send('News saved to favorites successfully');
+  } catch (error) {
+    console.error('Failed to save news:', error.message);
+    res.status(500).send('Failed to save news');
+  }
+});
+
+// route to get saved news for a user
+app.get('/api/saveNews', async (req, res) => {
+  try {
+    const { username } = req.query;
+
+    if (!username) {
+      return res.status(400).send('Username is required');
+    }
+
+    const savedNews = await SavedNews.find({ username });
+
+    res.status(200).json(savedNews);
+  } catch (error) {
+    console.error('Failed to fetch saved news:', error.message);
+    res.status(500).send('Failed to fetch saved news');
+  }
+});
+
+// route to handle deleting a saved news from the user's favorites
+app.delete('/api/saveNews', async (req, res) => {
+  try {
+    const { username, newsId } = req.query;
+
+    if (!username || !newsId) {
+      return res.status(400).send('Username and newsId are required');
+    }
+
+    // find the radio using username followed by article ID
+    const result = await SavedNews.findOneAndDelete({ username, article_id: newsId });
+
+    if (!result) {
+      return res.status(404).send('News not found');
+    }
+
+    res.status(200).send('News deleted successfully');
+  } catch (error) {
+    console.error('Failed to delete news:', error.message);
+    res.status(500).send('Failed to delete news');
+  }
+});
+
+
+
+//dqwdbqwhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 
 // route to handle updating user details
 app.put('/api/updateUser/:username', async (req, res) => {

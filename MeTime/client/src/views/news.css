@@ -1,0 +1,144 @@
+input, select {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+.news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .news-item {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .news-thumbnail-container {
+    width: 100%; /* Ensures the container takes up full available width */
+    max-width: 500px; /* Sets a maximum width for the container */
+    height: auto; /* Keeps the container height flexible */
+    overflow: hidden; /* Hides overflow to maintain a clean look */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+  }
+
+  .news-thumbnail-container img {
+      max-width: 100%;
+      max-height: 500px; /* Ensures the images maintain aspect ratio up to 400px height */
+      width: auto; /* Keeps the aspect ratio */
+      height: auto; /* Keeps the aspect ratio */
+  }
+
+  
+  
+  .news-details {
+    
+    flex: 1;
+    text-align: left;
+    
+  }
+  
+  .news-title {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .news-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  button.save {
+    padding: 10px 15px;
+    border: none;
+    background-color: #46360a;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button.save:hover {
+    background-color: #5f4f13;
+  }
+
+  button.view {
+    padding: 10px 15px;
+    border: none;
+    background-color: #14325f;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button.view:hover {
+    background-color: #496987;
+  }
+  
+  button.search {
+    width: 100px;
+    height: 30px;
+    padding-left: 32px; 
+    padding-right: 32px; 
+    padding-top: 8px; 
+    padding-bottom: 8px; 
+    background: #D0AA8D; 
+    border-radius: 32px; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 8px; 
+    display: inline-flex;
+    color: white;
+    font-size: 16px; 
+    font-family: 'Montserrat';
+    font-weight: 600; 
+    cursor: pointer;
+  }
+
+  button.search:hover{
+    background-color: #543d11;
+  }
+
+  button.clear {
+    width: 100px;
+    height: 30px;
+    padding-left: 32px; 
+    padding-right: 32px; 
+    padding-top: 8px; 
+    padding-bottom: 8px; 
+    background: #662e4c; 
+    border-radius: 32px; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 8px; 
+    display: inline-flex;
+    color: white;
+    font-size: 16px; 
+    font-family: 'Montserrat';
+    font-weight: 600; 
+    cursor: pointer;
+    margin-left: 15px;
+  }
+
+  button.clear:hover{
+    background-color: #2f0722;
+  }
+
+  hr {
+    margin: 30px 0;
+  }
+  
+  .bold-title {
+    font-weight: bold;
+  }
+  

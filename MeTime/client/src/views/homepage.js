@@ -69,6 +69,7 @@ function HomePage() {
             <div className="WhatToExploreToday" style={{ color: '#C39379', fontSize: 48, fontFamily: 'Montserrat', fontWeight: '800', lineHeight: '72px', wordWrap: 'break-word' }}> What to explore today, {username}?</div>
           </div>
           <div className="LeftContent" style={{ width: '100%', flex: 1, padding: 42, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 32, display: 'flex', marginRight: 50 }}>
+            
             <div className="TopContent" style={{ width: '100%', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start', gap: 42, display: 'flex' }}>
               <div className="Frame17" style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 8, display: 'flex' }}>
                 <Link to="/gamespage">
@@ -78,6 +79,7 @@ function HomePage() {
                   <div className="Games" style={{ color: '#7D6558', fontSize: 32, fontFamily: 'Montserrat', fontWeight: '600', lineHeight: '48px', wordWrap: 'break-word' }}>Games</div>
                 </div>
               </div>
+              
               <div className="Frame19" style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 8, display: 'flex' }}>
                 <Link to='/bookspage'>
                   <img className="WorkerReadingNewsWithTablet1" style={{ width: '100%', borderRadius: 32 }} src={book} alt="Books" /></Link>
@@ -86,13 +88,18 @@ function HomePage() {
                 </div>
               </div>
             </div>
+
             <div className="BottomContent" style={{ width: '100%', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start', gap: 42, display: 'flex' }}>
+              
               <div className="Frame20" style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 8, display: 'flex' }}>
-                <img className="ConceptFakeNews1" style={{ width: '100%', borderRadius: 32 }} src={news} alt="News" />
+                <Link to= "/newspage">
+                  <img className="ConceptFakeNews1" style={{ width: '100%', borderRadius: 32 }} src={news} alt="News" />
+                </Link>
                 <div className="Frame18" style={{ width: '100%', padding: '0 8px', justifyContent: 'center', alignItems: 'center', gap: 8, display: 'flex' }}>
                   <div className="News" style={{ color: '#7D6558', fontSize: 32, fontFamily: 'Montserrat', fontWeight: '600', lineHeight: '48px', wordWrap: 'break-word' }}>News</div>
                 </div>
               </div>
+              
               <div className="Frame21" style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 8, display: 'flex' }}>
                 <Link to="/radiopage">
                   <img className="HappyYoungWomanListeningMusicBed1" style={{ width: '100%', borderRadius: 32 }} src={music} alt="Happy Young Woman Listening to Music" />
@@ -114,6 +121,7 @@ function HomePage() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
         <div

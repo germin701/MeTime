@@ -5,7 +5,7 @@ import saveIcon from '../assets/favourite.png';
 import profileIcon from '../assets/profilepic.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMusic } from '@fortawesome/free-solid-svg-icons';
+import { faMusic, faNewspaper } from '@fortawesome/free-solid-svg-icons';
 import './favourite.css';
 
 // User's Favourite Collection Page
@@ -49,7 +49,11 @@ function FavoritesPage() {
           setSavedRadios(responseRadios.data);
           break;
         case 'news':
-          //
+          // fetch the list of saved games
+          const responseNews = await axios.get('http://localhost:5000/api/saveNews', {
+            params: { username, category: 'news' }
+          });
+          setSavedNews(responseNews.data);
           break;
         default:
           throw new Error('Unknown category: ' + category);
@@ -82,9 +86,10 @@ function FavoritesPage() {
         // contruct the url to search for selected radio
         url = `http://localhost:5000/api/saveRadio?username=${username}&radioId=${itemId}`;
         break;
-      /*case 'news':
-          
-            break;*/
+      case 'news':
+        // contruct the url to search for selected radio
+        url = `http://localhost:5000/api/saveNews?username=${username}&newsId=${itemId}`;
+        break;
       default:
         console.error('Unknown category:', category);
         return;
@@ -111,9 +116,11 @@ function FavoritesPage() {
             const updatedSavedRadios = savedRadios.filter(radio => radio.stationuuid !== itemId);
             setSavedRadios(updatedSavedRadios);
             break;
-          /*case 'news':
-            
-            break;*/
+          case 'news':
+            // update the news list after deletions
+            const updatedSavedNews = savedNews.filter(faNewspaper => news.article_id !== itemId);
+            setSavedNews(updatedSavedNews);
+            break;
           default:
             console.error('Unknown category:', category);
             break;
@@ -148,7 +155,9 @@ function FavoritesPage() {
     else if (category === 'radios') {
       fetchItems('radios');
     }
-    // news here
+    else if (category === 'news') {
+      fetchItems('news');
+    }
   };
 
   // log out

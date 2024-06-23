@@ -5,6 +5,7 @@ import HomePage from './views/homepage';
 import RadioPage from './views/radiopage';
 import BookPage from './views/bookspage';
 import GamesPage from './views/games';
+import NewsPage from './views/newspage';
 import SignUpPage from './views/signup';
 import LoginPage from './views/login';
 import ProfilePage from './views/profile';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/radiopage" element={<RadioPage />} />
             <Route path="/bookspage" element={<BookPage />} />
             <Route path="/gamespage" element={<GamesPage />} />
+            <Route path="/newspage" element={<NewsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/latest" element={<LatestPage />} />
             <Route path="/favourites" element={<FavoritesPage/>} />
