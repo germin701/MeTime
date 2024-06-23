@@ -56,7 +56,7 @@ function RadioPage() {
     fetchOptions();
   }, []);
 
-  // Verify the use have filter the country by country field or not and fetch state list from the third party API endpoint
+  // Verify the user have filter the country by country field or not and fetch state list from the third party API endpoint
   const handleFilterChange = async (e) => {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
