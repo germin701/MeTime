@@ -354,7 +354,7 @@ function NewsPage() {
           <div className="news-list">
             {filteredNews.map(article => (
               <div key={article.article_id} className="news-item">
-                <img src={article.imageUrl} alt={article.title} className="news-thumbnail-container" />
+                <img src={article.imageUrl} alt={"No image provided"} className="news-thumbnail-container" />
                 <div className="news-details">
                   <h2 className="news-title">{article.title}</h2>
                   <hr/>

@@ -5,7 +5,7 @@ import saveIcon from '../assets/favourite.png';
 import profileIcon from '../assets/profilepic.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMusic, faNewspaper } from '@fortawesome/free-solid-svg-icons';
+import { faMusic } from '@fortawesome/free-solid-svg-icons';
 import './favourite.css';
 
 // User's Favourite Collection Page
@@ -87,7 +87,7 @@ function FavoritesPage() {
         url = `http://localhost:5000/api/saveRadio?username=${username}&radioId=${itemId}`;
         break;
       case 'news':
-        // contruct the url to search for selected radio
+        // contruct the url to search for selected news
         url = `http://localhost:5000/api/saveNews?username=${username}&newsId=${itemId}`;
         break;
       default:
@@ -284,9 +284,9 @@ function FavoritesPage() {
             ))}
           </div>
         ) : (
-          // if there's no saved books
+          // if there's no saved radios
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p>No saved books found.</p>
+            <p>No saved radios found.</p>
           </div>
         );
       case 'news':
@@ -294,7 +294,7 @@ function FavoritesPage() {
           <div className="news-list">
             {savedNews.map(article => (
               <div key={article.article_id} className="news-item">
-                <img src={article.imageUrl} alt={article.title} className="news-thumbnail-container" />
+                <img src={article.imageUrl} alt={'No Image Provided'} className="news-thumbnail-container" />
                 <div className="news-details">
                   <h2 className="news-title">{article.title}</h2>
                   <hr />
@@ -322,9 +322,9 @@ function FavoritesPage() {
             ))}
           </div>
         ) : (
-          // if there's no saved books
+          // if there's no saved news
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p>No saved books found.</p>
+            <p>No saved news found.</p>
           </div>
         );
       default:
