@@ -212,6 +212,7 @@ function FavoritesPage() {
             <p>No saved games found.</p>
           </div>
         );
+      // if book category is chosen
       case 'books':
         return savedBooks.length > 0 ? (
           <div className="books-list">
@@ -226,7 +227,7 @@ function FavoritesPage() {
                   <p><span className="bold-title">Published On: </span>{book.first_publish_year}</p>
                   <p><span className="bold-title">Languages Available: </span>{Array.isArray(book.language) ? book.language.join(', ') : book.language}</p>
                   <p><span className="bold-title">Time: </span>{Array.isArray(book.time) ? book.time.join(', ') : book.time}</p>
-                  <p><span className="bold-title">Average Rating: </span>{book.ratings_average}</p>
+                  <p><span className="bold-title">Average Rating: </span>{book.ratings_average.toFixed(2)}</p>
                   <div className="book-buttons">
                     <a href={`https://openlibrary.org${book.id}`} target="_blank" rel="noopener noreferrer">
                       <button className="view">View Book</button>
