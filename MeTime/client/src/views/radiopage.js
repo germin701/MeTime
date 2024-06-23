@@ -23,9 +23,10 @@ function RadioPage() {
   const [loading, setLoading] = useState(false);
   const [savedRadios, setSavedRadios] = useState([]);
   const [stateDisabled, setStateDisabled] = useState(true);
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [totalNumberPage, setTotalNumberPages] = useState(0);
   const stationsPerPage = 10;
   const pagesPerRange = 20;
-
   // log out
   const logout = () => {
     // clear token, session ended
@@ -63,12 +64,58 @@ function RadioPage() {
     }
   };
 
+  const clearStations = () => {
+    setStations([]);
+    setFilteredStations([]);
+  };
+
+  const renderInitialContent = async () => {
+    setLoading(true);
+    clearStations();
+    try {
+      const response = await axios.get(`https://de1.api.radio-browser.info/json/stations?offset=${(currentPage - 1) * stationsPerPage}&limit=${stationsPerPage}`);
+      const stationsByHomepage = new Map();
+      response.data.forEach(station => {
+        const currentStation = stationsByHomepage.get(station.homepage);
+        if (!currentStation || new Date(currentStation.lastchangetime) < new Date(station.lastchangetime)) {
+          stationsByHomepage.set(station.homepage, station);
+        }
+      });
+      const uniqueStations = Array.from(stationsByHomepage.values());
+      setStations(uniqueStations);
+      setFilteredStations(uniqueStations);
+      setNoResults(uniqueStations.length === 0);
+      setTotalPages(totalNumberPage);
+    } catch (error) {
+      console.error("Error fetching stations:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderFilteredContent = async (filteredStations) => {
+    setLoading(true);
+    clearStations();
+    try {
+      setFilteredStations(filteredStations);
+      setNoResults(filteredStations.length === 0);
+    } catch (error) {
+      console.error("Error rendering filtered stations:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchTotalStations = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('https://de1.api.radio-browser.info/json/stations');
+        console.log('ahhshshhsshshshhshshshshshhahahaahhhsahshahsa');
+        const response = await axios.get('https://de1.api.radio-browser.info/json/stations?limit=1000');
         const totalStations = response.data.length;
+        console.log(totalStations);
+        console.log(Math.ceil(totalStations / stationsPerPage));
+        setTotalNumberPages(Math.ceil(totalStations / stationsPerPage));
         setTotalPages(Math.ceil(totalStations / stationsPerPage));
       } catch (error) {
         console.error("Error fetching total stations:", error);
@@ -81,27 +128,33 @@ function RadioPage() {
   }, []);
 
   useEffect(() => {
-    const fetchStations = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`https://de1.api.radio-browser.info/json/stations?offset=${(currentPage - 1) * stationsPerPage}&limit=${stationsPerPage}`);
-        const stationsByHomepage = new Map();
-        response.data.forEach(station => {
-          const currentStation = stationsByHomepage.get(station.homepage);
-          if (!currentStation || new Date(currentStation.lastchangetime) < new Date(station.lastchangetime)) {
-            stationsByHomepage.set(station.homepage, station);
-          }
-        });
-        const uniqueStations = Array.from(stationsByHomepage.values());
-        setStations(uniqueStations);
-        setFilteredStations(uniqueStations);
-        setNoResults(uniqueStations.length === 0);
-      } catch (error) {
-        console.error("Error fetching stations:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!isFiltered) {
+      renderInitialContent();
+    }
+  }, [currentPage]);
+
+  // useEffect(() => {
+  //   const fetchStations = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await axios.get(`https://de1.api.radio-browser.info/json/stations?offset=${(currentPage - 1) * stationsPerPage}&limit=${stationsPerPage}`);
+  //       const stationsByHomepage = new Map();
+  //       response.data.forEach(station => {
+  //         const currentStation = stationsByHomepage.get(station.homepage);
+  //         if (!currentStation || new Date(currentStation.lastchangetime) < new Date(station.lastchangetime)) {
+  //           stationsByHomepage.set(station.homepage, station);
+  //         }
+  //       });
+  //       const uniqueStations = Array.from(stationsByHomepage.values());
+  //       setStations(uniqueStations);
+  //       setFilteredStations(uniqueStations);
+  //       setNoResults(uniqueStations.length === 0);
+  //     } catch (error) {
+  //       console.error("Error fetching stations:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
     // const fetchSavedRadios = async () => {
     //   try {
@@ -138,9 +191,9 @@ function RadioPage() {
     //   }
     // };
 
-    fetchStations();
+    // fetchStations();
     // fetchSavedRadios();
-  }, [currentPage]);
+  // }, [currentPage]);
   // }, [currentPage, username]);
 
   useEffect(() => {
@@ -233,6 +286,7 @@ function RadioPage() {
         }
       } else {
         setOptions(prevOptions => ({ ...prevOptions, states: [] }));
+        setStateDisabled(true);
       }
     }
   };
@@ -258,16 +312,49 @@ function RadioPage() {
   //   setTotalPages(Math.ceil(filtered.length / stationsPerPage));
   // };
 
-  const filterStations = async () => {
+  // const filterStations = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const queryParams = new URLSearchParams();
+  //     if (filters.name) queryParams.append('name', filters.name);
+  //     if (filters.country) queryParams.append('country', filters.country);
+  //     if (filters.state) queryParams.append('state', filters.state);
+  //     if (filters.language) queryParams.append('language', filters.language);
+
+  //     const response = await axios.get(`https://de1.api.radio-browser.info/json/stations/search?limit=100&${queryParams.toString()}`);
+  //     const stationsByHomepage = new Map();
+  //     response.data.forEach(station => {
+  //       const currentStation = stationsByHomepage.get(station.homepage);
+  //       if (!currentStation || new Date(currentStation.lastchangetime) < new Date(station.lastchangetime)) {
+  //         stationsByHomepage.set(station.homepage, station);
+  //       }
+  //     });
+  //     const uniqueStations = Array.from(stationsByHomepage.values());
+  //     setFilteredStations(uniqueStations);
+  //     setNoResults(uniqueStations.length === 0);
+  //     setTotalPages(Math.ceil(uniqueStations.length / stationsPerPage));
+  //     setCurrentPage(1);
+  //     setPageRange([1, 20]);
+  //   } catch (error) {
+  //     console.error("Error filtering stations:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSearch = async () => {
     setLoading(true);
+    setIsFiltered(true);
+    clearStations();
     try {
       const queryParams = new URLSearchParams();
       if (filters.name) queryParams.append('name', filters.name);
       if (filters.country) queryParams.append('country', filters.country);
       if (filters.state) queryParams.append('state', filters.state);
       if (filters.language) queryParams.append('language', filters.language);
+      console.log(`https://de1.api.radio-browser.info/json/stations/search?limit=100&${queryParams.toString()}`);
 
-      const response = await axios.get(`https://de1.api.radio-browser.info/json/stations/search?${queryParams.toString()}`);
+      const response = await axios.get(`https://de1.api.radio-browser.info/json/stations/search?limit=100&${queryParams.toString()}`);
       const stationsByHomepage = new Map();
       response.data.forEach(station => {
         const currentStation = stationsByHomepage.get(station.homepage);
@@ -281,6 +368,7 @@ function RadioPage() {
       setTotalPages(Math.ceil(uniqueStations.length / stationsPerPage));
       setCurrentPage(1);
       setPageRange([1, 20]);
+      renderFilteredContent(uniqueStations);
     } catch (error) {
       console.error("Error filtering stations:", error);
     } finally {
@@ -288,9 +376,9 @@ function RadioPage() {
     }
   };
 
-  const handleSearch = () => {
-    filterStations();
-  };
+  // const handleSearch = () => {
+  //   filterStations();
+  // };
 
   // const clearFilters = () => {
   //   setFilters({ name: '', country: '', state: '', language: '' });
@@ -303,40 +391,56 @@ function RadioPage() {
   //   setOptions(prevOptions => ({ ...prevOptions, states: [] }));
   // };
 
+  // const clearFilters = async () => {
+  //   setFilters({ name: '', country: '', state: '', language: '' });
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.get(`https://de1.api.radio-browser.info/json/stations?offset=${(currentPage - 1) * stationsPerPage}&limit=${stationsPerPage}`);
+  //     const stationsByHomepage = new Map();
+  //     response.data.forEach(station => {
+  //       const currentStation = stationsByHomepage.get(station.homepage);
+  //       if (!currentStation || new Date(currentStation.lastchangetime) < new Date(station.lastchangetime)) {
+  //         stationsByHomepage.set(station.homepage, station);
+  //       }
+  //     });
+  //     const uniqueStations = Array.from(stationsByHomepage.values());
+  //     setStations(uniqueStations);
+  //     setFilteredStations(uniqueStations);
+  //     setNoResults(uniqueStations.length === 0);
+  //     setStateDisabled(true);
+  //     setOptions(prevOptions => ({ ...prevOptions, states: [] }));
+  //     console.log(uniqueStations.length);
+  //     console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+  //     console.log(Math.ceil(uniqueStations.length / stationsPerPage));
+  //     setTotalPages(Math.ceil(uniqueStations.length / stationsPerPage));
+  //     setCurrentPage(1);
+  //     setPageRange([1, 20]);
+  //   } catch (error) {
+  //     console.error("Error clearing filters:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const clearFilters = async () => {
     setFilters({ name: '', country: '', state: '', language: '' });
-    setLoading(true);
-    try {
-      const response = await axios.get(`https://de1.api.radio-browser.info/json/stations?offset=${(currentPage - 1) * stationsPerPage}&limit=${stationsPerPage}`);
-      const stationsByHomepage = new Map();
-      response.data.forEach(station => {
-        const currentStation = stationsByHomepage.get(station.homepage);
-        if (!currentStation || new Date(currentStation.lastchangetime) < new Date(station.lastchangetime)) {
-          stationsByHomepage.set(station.homepage, station);
-        }
-      });
-      const uniqueStations = Array.from(stationsByHomepage.values());
-      setStations(uniqueStations);
-      setFilteredStations(uniqueStations);
-      setNoResults(uniqueStations.length === 0);
-      setStateDisabled(true);
-      setOptions(prevOptions => ({ ...prevOptions, states: [] }));
-      console.log(uniqueStations.length);
-      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-      console.log(Math.ceil(uniqueStations.length / stationsPerPage));
-      setTotalPages(Math.ceil(uniqueStations.length / stationsPerPage));
-      setCurrentPage(1);
-      setPageRange([1, 20]);
-    } catch (error) {
-      console.error("Error clearing filters:", error);
-    } finally {
-      setLoading(false);
-    }
+    setCurrentPage(1);
+    setPageRange([1, 20]);
+    setIsFiltered(false);
+    setStateDisabled(true);
+    await renderInitialContent();
+    console.log(totalNumberPage);
+    setTotalPages(totalNumberPage);
   };
 
   const handlePageClick = (pageNumber) => {
     console.log(totalPages);
     setCurrentPage(pageNumber);
+    if (isFiltered) {
+      renderFilteredContent(filteredStations.slice((pageNumber - 1) * stationsPerPage, pageNumber * stationsPerPage));
+    } else {
+      renderInitialContent();
+    }
   };
 
   // const totalPages = Math.ceil(filteredStations.length / stationsPerPage);
