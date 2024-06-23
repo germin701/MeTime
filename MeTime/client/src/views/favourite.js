@@ -295,14 +295,14 @@ function FavoritesPage() {
           <div className="news-list">
             {savedNews.map(article => (
               <div key={article.article_id} className="news-item">
-                <img src={article.imageUrl} alt={'No Image Provided'} className="news-thumbnail-container" />
+                <img src={article.image_url} alt={'No Image Provided'} className="news-thumbnail-container" />
                 <div className="news-details">
                   <h2 className="news-title">{article.title}</h2>
                   <hr />
                   <p><span className="bold-title">Description: </span>{article.description || 'N/A'}</p>
                   <p><span className="bold-title">Creator: </span>{article.creator || 'N/A'}</p>
                   <p><span className="bold-title">Published Date: </span>{article.pubDate || 'N/A'}</p>
-                  <p><span className="bold-title">Source: </span>{article.sourceId || 'N/A'}</p>
+                  <p><span className="bold-title">Source: </span>{article.source_id || 'N/A'}</p>
                   <p><span className="bold-title">Language: </span>{article.language || 'N/A'}</p>
                   <p><span className="bold-title">Country: </span>{article.country || 'N/A'}</p>
                   <p><span className="bold-title">Category: </span>{article.category || 'N/A'}</p>

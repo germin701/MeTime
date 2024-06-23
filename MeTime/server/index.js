@@ -390,7 +390,6 @@ app.delete('/api/saveRadio', async (req, res) => {
 });
 
 
-// duwduduwgdugduuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
 // route to handle saving of a news to the user's favorites
 app.post('/api/saveNews', async (req, res) => {
   try {
@@ -404,13 +403,13 @@ app.post('/api/saveNews', async (req, res) => {
       return res.status(400).send('Invalid request body');
     }
 
-    // check if the radio is already saved by the user
+    // check if the news is already saved by the user
     const existingSavedNews = await SavedNews.findOne({ username, article_id: article.article_id });
     if (existingSavedNews) {
       return res.status(400).send('News already saved to favorites');
     }
 
-    // create a new saved radio
+    // create a new saved news
     const newSavedNews = new SavedNews({
       username,
       article_id: article.article_id,
@@ -419,8 +418,8 @@ app.post('/api/saveNews', async (req, res) => {
       creator: article.creator, 
       description: article.description,
       pubDate: article.pubDate,
-      imageUrl: article.image_url,
-      sourceId: article.source_id,
+      image_url: article.image_url,
+      source_id: article.source_id,
       language: article.language,
       country: article.country, 
       category: article.category, 
@@ -479,8 +478,6 @@ app.delete('/api/saveNews', async (req, res) => {
 });
 
 
-
-//dqwdbqwhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 
 // route to handle updating user details
 app.put('/api/updateUser/:username', async (req, res) => {

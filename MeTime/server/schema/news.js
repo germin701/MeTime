@@ -6,12 +6,10 @@ const SavedNewsSchema = new Schema({
         type: String,
         required: true,
     },
-
     article_id: {
         type: String,
         required: true,
     },
-
     title: {
         type: String,
         required: false,
@@ -32,11 +30,11 @@ const SavedNewsSchema = new Schema({
         type: String,
         required: false,
     },
-    imageURL: {
+    image_url: {
         type: String,
         required: false,
     },
-    sourceId: {
+    source_id: {
         type: String,
         required: false,
     },
