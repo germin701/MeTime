@@ -15,7 +15,7 @@ const SavedBookSchema = new Schema({
         required: true,
     },
     first_sentence: {
-        type: String,
+        type: [String],
         required: false,
     },
     author: {
