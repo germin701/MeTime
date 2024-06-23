@@ -398,6 +398,7 @@ app.post('/api/saveNews', async (req, res) => {
 
     // Log the incoming request body
     console.log('Incoming save news request:', req.body);
+    console.log(article.article_id);
 
     if (!username || !article || !article.article_id) {
       return res.status(400).send('Invalid request body');

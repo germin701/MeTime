@@ -49,7 +49,7 @@ function FavoritesPage() {
           setSavedRadios(responseRadios.data);
           break;
         case 'news':
-          // fetch the list of saved games
+          // fetch the list of saved news
           const responseNews = await axios.get('http://localhost:5000/api/saveNews', {
             params: { username, category: 'news' }
           });
@@ -118,7 +118,7 @@ function FavoritesPage() {
             break;
           case 'news':
             // update the news list after deletions
-            const updatedSavedNews = savedNews.filter(faNewspaper => news.article_id !== itemId);
+            const updatedSavedNews = savedNews.filter(news => news.article_id !== itemId);
             setSavedNews(updatedSavedNews);
             break;
           default:
@@ -290,9 +290,42 @@ function FavoritesPage() {
           </div>
         );
       case 'news':
-        return (
+        return savedNews.length > 0 ? (
+          <div className="news-list">
+            <p>ifiwubfew</p>
+            {savedRadios.map(article => (
+              <div key={article.article_id} className="news-item">
+                <img src={article.imageUrl} alt={article.title} className="news-thumbnail-container" />
+                <div className="news-details">
+                  <h2 className="news-title">{article.title.trim() || '(No Title Provided)'}</h2>
+                  <hr />
+                  <p><span className="bold-title">Description: </span>{article.description || 'N/A'}</p>
+                  <p><span className="bold-title">Creator: </span>{article.creator || 'N/A'}</p>
+                  <p><span className="bold-title">Published Date: </span>{article.pubDate || 'N/A'}</p>
+                  <p><span className="bold-title">Source: </span>{article.sourceId || 'N/A'}</p>
+                  <p><span className="bold-title">Language: </span>{article.language || 'N/A'}</p>
+                  <p><span className="bold-title">Country: </span>{article.country || 'N/A'}</p>
+                  <p><span className="bold-title">Category: </span>{article.category || 'N/A'}</p>
+                  <div className="station-buttons">
+                    <a href={article.link} target="_blank" rel="noopener noreferrer">
+                      <button className="view">View Article</button>
+                    </a>
+                    <button
+                      className="delete"
+                      aria-label={`Delete`}
+                      onClick={() => handleDeleteItem(article.article_id, 'news')}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          // if there's no saved books
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p>No saved news found.</p>
+            <p>No saved books found.</p>
           </div>
         );
       default:

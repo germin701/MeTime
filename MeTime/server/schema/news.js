@@ -8,7 +8,7 @@ const SavedNewsSchema = new Schema({
     },
 
     article_id: {
-        type: Number,
+        type: String,
         required: true,
     },
 

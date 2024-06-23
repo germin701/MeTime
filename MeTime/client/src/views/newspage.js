@@ -95,7 +95,7 @@ function NewsPage() {
         if (filters.country) queryParams.append('country', countryCodes[filters.country]);
         if (filters.category) queryParams.append('category', filters.category);
         if (filters.language) queryParams.append('language', languageCodes[filters.language]);
-        const url = `https://newsdata.io/api/1/latest?apikey=pub_4479804182d66f5ac1c05709179ff0bf7f54e&${queryParams.toString()}&size=2`;
+        const url = `https://newsdata.io/api/1/latest?apikey=pub_43388a64d771db816152ebab81977eb147833&${queryParams.toString()}`;
    
         const response = await axios.get(url);
         //const { data } = response.data; // Assuming your data structure matches your provided JSON snippet
@@ -105,14 +105,14 @@ function NewsPage() {
           article_id: article.article_id,
           title: article.title,
           link: article.link,
-          creator: article.creator ? article.creator.join(', ') : '', // Check if creator is not null
+          creator: Array.isArray(article.creator) ? article.creator.join(', ') : (article.creator || ''),
           description: article.description,
           pubDate: article.pubDate,
           imageUrl: article.image_url,
           sourceId: article.source_id,
           language: article.language,
-          country: article.country ? article.country.join(', ') : '', // Assuming country is an array of strings
-          category: article.category ? article.category.join(', ') : '', // Assuming category is an array of strings
+          country: Array.isArray(article.country) ? article.country.join(', ') : (article.country || ''),
+          category: Array.isArray(article.category) ? article.category.join(', ') : (article.category || ''),
         }));
   
         setNews(formattedNews); // Set original news data
@@ -222,28 +222,26 @@ function NewsPage() {
 
       // Log the article object to ensure article_id is present
       console.log('Saving article:', article);
-      console.log('Article to be saved:', article_id);
-      console.log('Article to be saved:', article);
       // make POST request to save the book
       await axios.post('http://localhost:5000/api/saveNews', {
         username: username,
         article: {
-          article_id: article.article_id,
+          article_id: article.article_id.toString(),
           title: article.title,
           link: article.link,
-          creator: article.creator ? article.creator.join(', ') : '', // Check if creator is not null
+          creator: Array.isArray(article.creator) ? article.creator.join(', ') : (article.creator || ''),
           description: article.description,
           pubDate: article.pubDate,
           imageUrl: article.image_url,
           sourceId: article.source_id,
           language: article.language,
-          country: article.country ? article.country.join(', ') : '', // Assuming country is an array of strings
-          category: article.category ? article.category.join(', ') : '', // Assuming category is an array of strings
+          country: Array.isArray(article.country) ? article.country.join(', ') : (article.country || ''),
+          category: Array.isArray(article.category) ? article.category.join(', ') : (article.category || ''),
         }
       });
   
       // update savedNews state and local storage
-      const updatedSavedNews = [...savedNews, article.article.id];
+      const updatedSavedNews = [...savedNews, article.article_id];
       setSavedNews(updatedSavedNews);
       localStorage.setItem('savedNews', JSON.stringify(updatedSavedNews));
   
@@ -355,27 +353,29 @@ function NewsPage() {
         ) : (
           <div className="news-list">
             {filteredNews.map(article => (
-              <div key={article.id} className="news-item">
+              <div key={article.article_id} className="news-item">
                 <img src={article.imageUrl} alt={article.title} className="news-thumbnail-container" />
                 <div className="news-details">
                   <h2 className="news-title">{article.title}</h2>
                   <hr/>
-                  <p><span className="bold-title">Description: </span>{article.description}</p>
-                  <p><span className="bold-title">Creator: </span>{article.creator}</p>
-                  <p><span className="bold-title">Published Date: </span>{article.pubDate}</p>
-                  <p><span className="bold-title">Language: </span>{article.language}</p>
-                  <p><span className="bold-title">Country: </span>{article.country}</p>
-                  <p><span className="bold-title">Category: </span>{article.category}</p>
+                  {/* <p><span className="bold-title">article id: </span>{article.article_id || 'N/A'}</p> */}
+                  <p><span className="bold-title">Description: </span>{article.description || 'N/A'}</p>
+                  <p><span className="bold-title">Creator: </span>{article.creator || 'N/A'}</p>
+                  <p><span className="bold-title">Published Date: </span>{article.pubDate || 'N/A'}</p>
+                  <p><span className="bold-title">Source: </span>{article.sourceId || 'N/A'}</p>
+                  <p><span className="bold-title">Language: </span>{article.language || 'N/A'}</p>
+                  <p><span className="bold-title">Country: </span>{article.country || 'N/A'}</p>
+                  <p><span className="bold-title">Category: </span>{article.category || 'N/A'}</p>
                   <div className="news-buttons">
                     <a href={article.link} target="_blank" rel="noopener noreferrer">
                       <button className="view">View Article</button>
                     </a>
                     <button
                       className="save"
-                      onClick={() => saveToFavourites(news)}
-                      disabled={savedNews.includes(news.id)}
+                      onClick={() => saveToFavourites(article)}
+                      disabled={savedNews.includes(article.article_id)}
                     >
-                      {savedNews.includes(news.id) ? 'Saved' : 'Save to Favourites'}
+                      {savedNews.includes(article.article_id) ? 'Saved' : 'Save to Favourites'}
                     </button>
                   </div>
                 </div>
